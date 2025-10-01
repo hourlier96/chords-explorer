@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import FormView from '@/views/FormView.vue'
-import TableView from '@/views/TableView.vue'
+import FormView from '@/views/AdvancedExplorer.vue'
+import TableView from '@/views/SimpleExplorer.vue'
 import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
@@ -8,13 +8,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'table',
+      name: 'simple',
       meta: { requiresAuth: false },
       component: TableView
     },
     {
-      path: '/form',
-      name: 'form',
+      path: '/advanced',
+      name: '',
       meta: { requiresAuth: false },
       component: FormView
     },

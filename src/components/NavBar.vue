@@ -10,13 +10,6 @@
     </h3>
     <v-app-bar-nav-icon />
     <v-spacer />
-    <v-btn @click="openDocumentation()">
-      <v-img
-        :src="imgSrc"
-        alt="Vue logo"
-        width="20"
-      />
-    </v-btn>
     <v-btn @click="showLang = !showLang">
       <v-icon>
         <country-flag
@@ -78,10 +71,6 @@ onMounted(() => {
   theme.global.name.value = prefStore.isDark ? 'customDarkTheme' : 'customLightTheme'
   setLang(prefStore.lang)
 })
-
-function openDocumentation() {
-  window.open('https://vuejs.org/guide/quick-start.html', '_blank')
-}
 
 function getFlag(lang) {
   return countries_infos.find((item) => item.value === lang).flag

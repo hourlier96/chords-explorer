@@ -20,27 +20,33 @@
     >
       <v-list-item
         to="/"
-        prepend-icon="mdi-table"
-        title="Table"
-        value="table"
+        prepend-icon="mdi-music-note"
+        :title="$t('navigation.simple_explorer')"
+        value="simplified"
       />
       <v-list-item
-        to="/form"
-        prepend-icon="mdi-list-box-outline"
-        title="Form"
-        value="form"
+        to="/advanced"
+        prepend-icon="mdi-music"
+        :title="$t('navigation.advanced_explorer')"
+        value="advanced"
       />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 
 let drawer = ref(true)
 let rail = ref(true)
 
 const emit = defineEmits(['expand'])
+
+onMounted(() => {
+  nextTick(() => {
+    expandRail(true)
+  })
+})
 
 function expandRail(expand) {
   rail.value = expand
