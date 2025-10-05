@@ -1,0 +1,7 @@
+- Terminer le panel de droite
+
+- Deux vues différentes: preset & vué avancée
+
+- Génération d'accords via preset
+
+- Mode analyse de touche cliqué pour avoir le nom d'un accord

@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastapi-base"
+version = "0.1.0"
+requires-python = ">=3.13"
+
+dependencies = [
+    "fastapi",
+    "google-generativeai"
+]
+
+
+[project.optional-dependencies]
+dev = [
+    "fastapi[standard]",
+    "debugpy", 
+    "ruff==0.11.7",
+    "mypy==1.15.0",
+    "pytest",
+    "pre-commit",
+]
+
+[tool.ruff]
+exclude = [
+    ".bzr", ".direnv", ".eggs", ".git", ".hg", ".mypy_cache", ".nox",
+    ".pants.d", ".ruff_cache", ".svn", ".tox", ".venv", "venv",
+    "__pypackages__", "_build", "buck-out", "build", "dist", "node_modules"
+]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.format]
+
+[tool.mypy]
+python_version = "3.13"    
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+# https://github.com/pytest-dev/pytest-asyncio/issues/924
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
