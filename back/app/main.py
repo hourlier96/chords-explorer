@@ -12,7 +12,6 @@ from app.tritone_substitution.generator import get_tritone_substitute
 from app.utils.borrowed_modes import get_borrowed_chords
 from app.utils.chords_analyzer import QualityAnalysisItem, analyze_chord_in_context
 from app.utils.common import get_note_from_index, get_note_index
-from app.utils.mode_detection_gemini import detect_tonic_and_mode
 from constants import MAJOR_MODES_DATA, MODES_DATA
 
 load_dotenv()

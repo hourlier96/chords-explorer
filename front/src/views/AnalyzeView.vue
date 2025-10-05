@@ -1,10 +1,8 @@
 <template>
   <v-container fluid>
     <v-row>
-      <!-- Colonne gauche -->
       <v-col cols="6">
         <v-row>
-          <!-- 1ère ligne : ton composant -->
           <v-col cols="12">
             <ChordProgressionBuilder
               v-model="progression"
@@ -20,7 +18,6 @@
             />
           </v-col>
 
-          <!-- 2ème ligne : vide ou autre contenu -->
           <v-col cols="12">
             <v-card outlined>
               <v-card-text> Contenu de la deuxième ligne de la colonne gauche </v-card-text>
@@ -29,7 +26,6 @@
         </v-row>
       </v-col>
 
-      <!-- Colonne droite -->
       <v-col cols="6">
         <ChordEditor v-model="currentlyEditingChord" @close="editingChordId = null" />
       </v-col>
