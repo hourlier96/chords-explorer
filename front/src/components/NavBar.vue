@@ -1,28 +1,14 @@
 <template>
-  <v-app-bar
-    id="navbar"
-    app
-    :height="'--navigation-bar-height'"
-    dark
-  >
-    <h3 class="ml-4">
-      Chords Explorer
-    </h3>
+  <v-app-bar id="navbar" app :height="'--navigation-bar-height'" dark>
+    <h3 class="ml-4">Chords Explorer</h3>
     <v-app-bar-nav-icon />
     <v-spacer />
     <v-btn @click="showLang = !showLang">
       <v-icon>
-        <country-flag
-          :country="getFlag(prefStore.lang)"
-          size="normal"
-        />
+        <country-flag :country="getFlag(prefStore.lang)" size="normal" />
       </v-icon>
     </v-btn>
-    <v-list
-      v-if="showLang"
-      :height="120"
-      class="flag-list"
-    >
+    <v-list v-if="showLang" :height="120" class="flag-list">
       <v-list-item
         v-for="(item, i) in countries_infos"
         :key="i"
@@ -30,25 +16,15 @@
         @click="setLang(item.value)"
       >
         <template #prepend>
-          <country-flag
-            :country="item.flag"
-            size="normal"
-            class="flag-item"
-          />
+          <country-flag :country="item.flag" size="normal" class="flag-item" />
         </template>
         <v-list-item-title>{{ item.title }}</v-list-item-title>
       </v-list-item>
     </v-list>
 
     <v-btn @click="prefStore.toggleTheme(theme)">
-      <v-icon
-        v-if="prefStore.isDark"
-        icon="fa:fa fa-moon"
-      />
-      <v-icon
-        v-else
-        icon="fa:fa fa-sun"
-      />
+      <v-icon v-if="prefStore.isDark" icon="fa:fa fa-moon" />
+      <v-icon v-else icon="fa:fa fa-sun" />
     </v-btn>
   </v-app-bar>
 </template>
@@ -68,7 +44,7 @@ const prefStore = preferencesStore()
 const showLang = ref(false)
 
 onMounted(() => {
-  theme.global.name.value = prefStore.isDark ? 'customDarkTheme' : 'customLightTheme'
+  theme.change(prefStore.isDark ? 'customDarkTheme' : 'customLightTheme')
   setLang(prefStore.lang)
 })
 

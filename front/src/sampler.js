@@ -2,7 +2,6 @@ import * as Tone from 'tone'
 import { useTempoStore } from '@/stores/tempo.js'
 import { NOTES_FLAT, ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS } from '@/constants.js'
 
-
 const compressor = new Tone.Compressor({
   threshold: -12,
   ratio: 4
@@ -126,7 +125,6 @@ export function getNotesForChord(chord, previousNotes = null) {
       })
     }
   }
-  console.log(notes)
   return notes
     .sort((a, b) => noteToMidi(`${a.name}${a.octave}`) - noteToMidi(`${b.name}${b.octave}`))
     .map((note) => `${note.name}${note.octave}`)
@@ -151,42 +149,10 @@ piano.playChord = function (chord) {
 }
 
 /**
- * Joue un accord en arpège en tenant compte du tempo.
- * @param {string} chord - Le nom de l'accord à jouer.
- */
-piano.playArpeggio = function (chord) {
-  const tempoStore = useTempoStore()
-  this.releaseAll()
-  const notes = getNotesForChord(chord)
-
-  if (notes.length > 0) {
-    const now = Tone.now()
-    const quarterNoteDuration = 60 / tempoStore.bpm
-
-    const totalArpeggioOccupancyDuration = quarterNoteDuration
-    const arpeggioTriggerInterval =
-      notes.length > 1 ? totalArpeggioOccupancyDuration / (notes.length - 1) : 0
-    const noteDuration =
-      arpeggioTriggerInterval > 0 ? arpeggioTriggerInterval * 1.2 : totalArpeggioOccupancyDuration
-
-    const baseVelocity = 0.45
-    const maxVelocity = 0.9
-    reverb.wet.value = ARPEGGIO_REVERB_WET
-    notes.forEach((note, index) => {
-      const velocity =
-        baseVelocity + (maxVelocity - baseVelocity) * (index / (notes.length - 1 || 1))
-      const startTime = now + index * arpeggioTriggerInterval
-
-      this.triggerAttackRelease(note, noteDuration, startTime, velocity)
-    })
-  }
-}
-
-/**
  * Plays a chord
  * @param {object} chord - The chord object with { root, quality }.
  */
 
 piano.play = function (chord) {
-    piano.playChord(chord)
+  piano.playChord(chord)
 }

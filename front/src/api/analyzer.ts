@@ -7,5 +7,5 @@ export default {
   // Used by unit tests, uses Public API
   unitTest() {
     return api.get('/', {})
-  },
+  }
 }

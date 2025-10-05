@@ -1,5 +1,13 @@
 // La structure des touches que vous aviez dans PianoKeyboard.vue
 export const whiteKeys = [
+  // Octave 2
+  { note: 'C2', blackKey: 'C#2' },
+  { note: 'D2', blackKey: 'D#2' },
+  { note: 'E2' },
+  { note: 'F2', blackKey: 'F#2' },
+  { note: 'G2', blackKey: 'G#2' },
+  { note: 'A2', blackKey: 'A#2' },
+  { note: 'B2' },
   // Octave 3
   { note: 'C3', blackKey: 'C#3' },
   { note: 'D3', blackKey: 'D#3' },
@@ -24,8 +32,14 @@ export const whiteKeys = [
   { note: 'G5', blackKey: 'G#5' },
   { note: 'A5', blackKey: 'A#5' },
   { note: 'B5' },
-  // Début de l'octave 6
-  { note: 'C6' }
+  // Octave 6
+  { note: 'C6', blackKey: 'C#6' },
+  { note: 'D6', blackKey: 'D#6' },
+  { note: 'E6' },
+  { note: 'F6', blackKey: 'F#6' },
+  { note: 'G6', blackKey: 'G#6' },
+  { note: 'A6', blackKey: 'A#6' },
+  { note: 'B6' }
 ]
 
 // On génère un tableau de toutes les notes jouables sur ce clavier

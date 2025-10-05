@@ -10,7 +10,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createI18n } from 'vue-i18n'
 import { languages } from '../i18n/index.js'
 import { defaultLocale } from '../i18n/index.js'
-import type { I18nOptions } from 'vue-i18n';
+import type { I18nOptions } from 'vue-i18n'
 
 // Global components
 import App from './App.vue'

@@ -7,21 +7,11 @@
     :location="sStore.location"
   >
     <div class="d-flex align-center">
-      <v-icon
-        v-if="sStore.icon"
-        :icon="sStore.icon"
-        class="mr-2"
-      />
+      <v-icon v-if="sStore.icon" :icon="sStore.icon" class="mr-2" />
       {{ sStore.text }}
     </div>
     <template #actions>
-      <v-btn
-        v-if="sStore.closable"
-        variant="text"
-        @click="sStore.displayed = false"
-      >
-        Close
-      </v-btn>
+      <v-btn v-if="sStore.closable" variant="text" @click="sStore.displayed = false"> Close </v-btn>
     </template>
   </v-snackbar>
 </template>

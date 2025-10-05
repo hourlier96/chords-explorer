@@ -14,10 +14,7 @@
       @click.stop="expandRail(!rail)"
     />
     <v-divider />
-    <v-list
-      density="compact"
-      nav
-    >
+    <v-list density="compact" nav>
       <v-list-item
         to="/analyzer"
         prepend-icon="mdi-magnify"

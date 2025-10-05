@@ -1,13 +1,7 @@
 <template>
   <div class="text-center">
-    <v-dialog
-      v-model="isOpen"
-      width="auto"
-    >
-      <CardContainer
-        :title="$t(title) || title"
-        class="text-center"
-      >
+    <v-dialog v-model="isOpen" width="auto">
+      <CardContainer :title="$t(title) || title" class="text-center">
         <template #body>
           <slot name="body" />
         </template>

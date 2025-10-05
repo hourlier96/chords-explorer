@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { defaultLocale } from '@/../i18n/index.js'
 import { i18n } from '@/main.ts'
 
-export const preferencesStore = defineStore('preferences',{
+export const preferencesStore = defineStore('preferences', {
   state: () => ({
     isDark: true,
     lang: defaultLocale
@@ -10,7 +10,7 @@ export const preferencesStore = defineStore('preferences',{
   actions: {
     toggleTheme(theme) {
       this.isDark = !this.isDark
-      theme.global.name.value = this.isDark ? 'customDarkTheme' : 'customLightTheme'
+      theme.change(this.isDark ? 'customDarkTheme' : 'customLightTheme')
     },
     setLang(lang) {
       this.lang = lang

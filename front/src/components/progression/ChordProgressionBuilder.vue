@@ -196,9 +196,11 @@ const props = defineProps({
   modelValue: { type: Array, required: true },
   isLoading: { type: Boolean, default: false },
   error: { type: String, default: '' },
-  aiModel: { type: String, required: true }
+  aiModel: { type: String, required: true },
+  editingChordId: { type: [Number, null], default: null },
+  activeChordObject: { type: Object, default: null }
 })
-const emit = defineEmits(['update:modelValue', 'analyze', 'update:aiModel'])
+const emit = defineEmits(['update:modelValue', 'analyze', 'update:aiModel', 'start-editing'])
 
 const isPianoVisible = ref(true)
 const editingChordId = ref(null)
@@ -309,12 +311,28 @@ function updateChord(index, newChord) {
   const newProgression = [...progression.value]
   newProgression[index] = newChord
   progression.value = newProgression
-  selectedChordNotes.value = getNotesForChord(newChord)
 }
 
+watch(
+  () => props.activeChordObject,
+  (newActiveChord) => {
+    if (newActiveChord) {
+      // Met à jour le piano à chaque modification de l'accord actif
+      selectedChordNotes.value = getNotesForChord(newActiveChord)
+    } else {
+      // Vide le piano si aucun accord n'est sélectionné
+      selectedChordNotes.value = []
+    }
+  },
+  {
+    // L'option magique ! Elle dit à Vue de surveiller les changements
+    // à l'intérieur de l'objet (comme la `quality` ou la `root`).
+    deep: true
+  }
+)
+
 function startEditing(chord) {
-  editingChordId.value = chord.id
-  selectedChordNotes.value = getNotesForChord(chord)
+  emit('start-editing', chord)
 }
 
 function stopEditing() {

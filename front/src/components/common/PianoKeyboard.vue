@@ -1,5 +1,5 @@
 <template>
-  <div class="piano-container">
+  <div class="piano-container" ref="pianoContainer">
     <div class="piano-keyboard">
       <div v-for="key in whiteKeys" :key="key.note" class="white-key-wrapper">
         <div :class="getNoteClasses(key.note, 'white')" @click="playNote(key.note)"></div>
@@ -15,9 +15,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { piano } from '@/sampler.js'
 import { whiteKeys } from '@/keyboard.js'
+
+const pianoContainer = ref(null)
 
 const props = defineProps({
   activeNotes: {
@@ -49,17 +51,37 @@ function getNoteClasses(note, type) {
 async function playNote(note) {
   piano.triggerAttackRelease(note, '8n')
 }
+
+onMounted(() => {
+  // L'objet `pianoContainer.value` contient maintenant l'élément DOM réel
+  const container = pianoContainer.value
+
+  if (container) {
+    // 1. Calculer le milieu du contenu total (scrollable)
+    const scrollWidth = container.scrollWidth
+
+    // 2. Calculer la largeur visible du conteneur
+    const clientWidth = container.clientWidth
+
+    // 3. Calculer la position pour centrer le contenu
+    const centerPosition = (scrollWidth - clientWidth) / 2
+
+    // 4. Appliquer le défilement horizontal
+    container.scrollLeft = centerPosition
+  }
+})
 </script>
 
 <style scoped>
 .piano-container {
   overflow-x: auto;
+  display: flex;
 }
 
 .piano-keyboard {
-  display: flex;
-  background: #000;
-  flex-wrap: 0;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  margin: 0 auto;
 }
 
 .white-key-wrapper {

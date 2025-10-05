@@ -12,6 +12,11 @@
               :error="analysisError"
               v-model:ai-model="selectedAiModel"
               @analyze="analyzeProgression()"
+              :editing-chord-id="editingChordId"
+              :active-chord-object="currentlyEditingChord"
+              @start-editing="(chord) => (editingChordId = chord.id)"
+              @stop-editing="editingChordId = null"
+              @update:chord="updateChord"
             />
           </v-col>
 
@@ -26,9 +31,7 @@
 
       <!-- Colonne droite -->
       <v-col cols="6">
-        <v-card outlined>
-          <v-card-text> Contenu de la colonne droite </v-card-text>
-        </v-card>
+        <ChordEditor v-model="currentlyEditingChord" @close="editingChordId = null" />
       </v-col>
     </v-row>
   </v-container>
@@ -38,6 +41,7 @@
 import { ref, computed } from 'vue'
 import { useAnalysisStore } from '@/stores/analysis.js'
 import ChordProgressionBuilder from '@/components/progression/ChordProgressionBuilder.vue'
+import ChordEditor from '@/components/progression/ChordEditor.vue'
 
 const analysisStore = useAnalysisStore()
 
@@ -87,6 +91,7 @@ const progression = ref(
 
 const isLoading = ref(false)
 const analysisError = ref(null)
+const editingChordId = ref(null)
 
 const selectedAiModel = ref('gemini-2.5-flash')
 
@@ -120,6 +125,26 @@ async function analyzeProgression() {
     analysisStore.clearResult()
   } finally {
     isLoading.value = false
+  }
+}
+
+const currentlyEditingChord = computed({
+  get() {
+    if (!editingChordId.value) return null
+    return progression.value.find((c) => c.id === editingChordId.value)
+  },
+  set(newValue) {
+    if (!newValue || !editingChordId.value) return
+    const index = progression.value.findIndex((c) => c.id === editingChordId.value)
+    if (index !== -1) {
+      progression.value[index] = newValue
+    }
+  }
+})
+
+function updateChord({ index, newChord }) {
+  if (index >= 0 && index < progression.value.length) {
+    progression.value[index] = newChord
   }
 }
 </script>
