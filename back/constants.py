@@ -72,42 +72,64 @@ ROMAN_TO_DEGREE_MAP = {
 }
 
 CORE_QUALITIES = {
-    # Majeurs
+    # --- Majeurs ---
     "": "major",
     "M": "major",
     "maj": "major",
-    "maj7": "major",
-    "maj7b5": "major",
-    "maj7#5": "major",
-    "maj7#11": "major",
-    "maj9": "major",
-    "maj13": "major",
     "6": "major",
-    "6/9": "major",
+    "add2": "major",
+    "add4": "major",
     "add9": "major",
-    # Mineurs
+    "add11": "major",
+    "6/9": "major",
+    "M7": "major",
+    "maj7": "major",
+    "Δ": "major",
+    "M9": "major",
+    "maj9": "major",
+    "maj11": "major",
+    "maj13": "major",
+    "M7#5": "major",
+    "maj7#5": "major",
+    "maj7b5": "major",
+    "mu": "major",
+    # --- Mineurs ---
     "m": "minor",
     "min": "minor",
-    "m7": "minor",
+    "-": "minor",
     "m6": "minor",
-    "m9": "minor",
-    "m11": "minor",
-    "m13": "minor",
-    "m(maj7)": "minor",
+    "-6": "minor",
     "m(add9)": "minor",
-    # Dominantes
+    "m(6/9)": "minor",
+    "m7": "minor",
+    "min7": "minor",
+    "-7": "minor",
+    "m9": "minor",
+    "-9": "minor",
+    "m11": "minor",
+    "-11": "minor",
+    "m13": "minor",
+    "-13": "minor",
+    "m(maj7)": "minor",
+    "mM7": "minor",
+    # --- Dominantes ---
     "7": "dominant",
     "9": "dominant",
     "11": "dominant",
+    "11(no3)": "dominant",
     "13": "dominant",
+    "aug7": "dominant",
+    "+7": "dominant",
     "7b5": "dominant",
     "7#5": "dominant",
     "7b9": "dominant",
-    "7b13": "dominant",
     "7#9": "dominant",
     "7#11": "dominant",
-    "13#11": "dominant",
-    "7alt": "dominant",
+    "7b13": "dominant",
+    "9b5": "dominant",
+    "9#5": "dominant",
+    "alt7": "dominant",
+    # (Conservés de votre liste originale pour être exhaustif)
     "7b9b5": "dominant",
     "7b9#5": "dominant",
     "7#9b5": "dominant",
@@ -117,21 +139,27 @@ CORE_QUALITIES = {
     "7#9#11": "dominant",
     "7b9b13": "dominant",
     "7#9b13": "dominant",
-    # Diminués
+    # --- Diminués ---
     "dim": "diminished",
     "d": "diminished",
+    "°": "diminished",
     "dim7": "diminished",
-    "m7b5": "diminished",
-    # Augmentés
+    "°7": "diminished",
+    "m7b5": "diminished",  # Demi-diminué
+    "ø": "diminished",  # Demi-diminué
+    # --- Augmentés ---
     "aug": "augmented",
-    # Suspendus
+    "+": "augmented",
+    # --- Suspendus ---
     "sus2": "suspended",
     "sus4": "suspended",
     "7sus2": "suspended",
     "7sus4": "suspended",
     "9sus4": "suspended",
-    # Autres
+    # --- Autres ---
     "5": "power",
+    "quartal": "other",
+    "split3": "other",
 }
 
 MODES_DATA: Dict[str, Tuple[List[int], List[str], Optional[int]]] = {}

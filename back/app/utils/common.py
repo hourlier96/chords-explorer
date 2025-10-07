@@ -130,12 +130,15 @@ def get_diatonic_7th_chord(degree, key_tonic_index, mode_name="Ionian"):
 
 
 def _get_core_quality(quality):
+    """
+    Détermine la famille principale (qualité fondamentale) d'un accord.
+    """
     if quality in CORE_QUALITIES:
         return CORE_QUALITIES[quality]
-    # Cas non reconnu : essayer de simplifier
+
     if quality.startswith("maj"):
         return "major"
-    if quality.startswith("m"):
+    if quality.startswith("m") or quality.startswith("-"):
         return "minor"
     if quality.startswith("dim") or quality.startswith("d") or quality.startswith("°"):
         return "diminished"
@@ -143,9 +146,8 @@ def _get_core_quality(quality):
         return "augmented"
     if "sus" in quality:
         return "suspended"
-    if "5" in quality:
-        return "power"
-    return "major"  # fallback
+
+    return "unknown"
 
 
 def get_scale_notes(key_tonic_str: str, mode_name: str) -> list[str]:

@@ -1,5 +1,4 @@
 import * as Tone from 'tone'
-import { useTempoStore } from '@/stores/tempo.js'
 import { NOTES_FLAT, ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS } from '@/constants.js'
 
 const compressor = new Tone.Compressor({
@@ -49,10 +48,8 @@ export const piano = new Tone.Sampler({
 
 compressor.connect(reverb)
 const DEFAULT_REVERB_WET = reverb.wet.value
-// Définis une valeur de réverbération plus élevée pour l'arpège
-const ARPEGGIO_REVERB_WET = 0.8 // Tu peux ajuster cette valeur (entre 0.0 et 1.0)
 
-function noteToMidi(note) {
+export function noteToMidi(note) {
   const octave = parseInt(note.slice(-1))
   const noteName = note.slice(0, -1)
   const noteIndex = NOTES_FLAT.indexOf(noteName)
@@ -65,6 +62,9 @@ function noteToMidi(note) {
  * @returns {string[]} An array of notes (e.g., ["C4", "E4", "G4"]).
  */
 export function getNotesForChord(chord, previousNotes = null) {
+  if (chord.notes && chord.notes.length > 0) {
+    return [...chord.notes]
+  }
   const intervals = CHORD_FORMULAS[chord.quality]
   if (!intervals) return []
 

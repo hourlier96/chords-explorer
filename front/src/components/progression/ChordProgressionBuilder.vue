@@ -11,22 +11,7 @@
           @stop="stopSound"
         />
       </div>
-      <div class="right-controls">
-        <v-tooltip location="top" :text="isPianoVisible ? 'Cacher le piano' : 'Afficher le piano'">
-          <template #activator="{ props }">
-            <button
-              v-bind="props"
-              @click="isPianoVisible = !isPianoVisible"
-              class="control-icon-button"
-            >
-              <v-icon icon="mdi-piano" />
-            </button>
-          </template>
-        </v-tooltip>
-      </div>
     </div>
-    <PianoKeyboard v-if="isPianoVisible" :active-notes="selectedChordNotes" class="mb-6" />
-
     <v-card>
       <v-tabs v-model="tab" bg-color="deep-purple-darken-4" centered>
         <v-tab value="progression">Progression</v-tab>
@@ -205,12 +190,11 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import draggable from 'vuedraggable'
 
 import { BEAT_WIDTH, useStatePlayer } from '@/composables/useStatePlayer.js'
-import { piano, getNotesForChord, getNotesAsMidi } from '@/sampler.js'
+import { piano, getNotesAsMidi } from '@/sampler.js'
 import { sleep } from '@/utils.js'
 import { useTempoStore } from '@/stores/tempo.js'
 import { useAnalysisStore } from '@/stores/analysis.js'
 
-import PianoKeyboard from '@/components/common/PianoKeyboard.vue'
 import ChordCard from '@/components/progression/ChordCard.vue'
 import TimelineGrid from '@/components/common/TimelineGrid.vue'
 import PlayerControls from '@/components/common/PlayerControls.vue'
@@ -223,14 +207,11 @@ const props = defineProps({
   isLoading: { type: Boolean, default: false },
   error: { type: String, default: '' },
   aiModel: { type: String, required: true },
-  editingChordId: { type: [Number, null], default: null },
-  activeChordObject: { type: Object, default: null }
+  editingChordId: { type: [Number, null], default: null }
 })
 const emit = defineEmits(['update:modelValue', 'analyze', 'update:aiModel', 'start-editing'])
 
-const isPianoVisible = ref(true)
 const editingChordId = ref(null)
-const selectedChordNotes = ref([])
 const showQuickImport = ref(false)
 const quickImportText = ref('')
 
@@ -244,9 +225,7 @@ const tab = ref('progression')
 
 const playChordItem = async ({ item, startOffsetBeats = 0 }) => {
   if (!item) return
-
   piano.play(item)
-  selectedChordNotes.value = getNotesForChord(item)
 
   const remainingDurationInBeats = item.duration - startOffsetBeats
   const chordDurationMs = remainingDurationInBeats * tempoStore.beatDurationMs
@@ -341,24 +320,6 @@ function updateChord(index, newChord) {
   progression.value = newProgression
 }
 
-watch(
-  () => props.activeChordObject,
-  (newActiveChord) => {
-    if (newActiveChord) {
-      // Met à jour le piano à chaque modification de l'accord actif
-      selectedChordNotes.value = getNotesForChord(newActiveChord)
-    } else {
-      // Vide le piano si aucun accord n'est sélectionné
-      selectedChordNotes.value = []
-    }
-  },
-  {
-    // L'option magique ! Elle dit à Vue de surveiller les changements
-    // à l'intérieur de l'objet (comme la `quality` ou la `root`).
-    deep: true
-  }
-)
-
 function startEditing(chord) {
   emit('start-editing', chord)
 }
@@ -389,7 +350,6 @@ function parseChordString(chordStr) {
 function removeAllChords() {
   progression.value = []
   stopEditing()
-  selectedChordNotes.value = []
   selectedChordIds.value.clear()
   clipboard.value = []
 }
@@ -652,8 +612,7 @@ onUnmounted(() => {
   margin-bottom: 1.5rem;
 }
 
-.left-controls,
-.right-controls {
+.left-controls {
   display: flex;
   align-items: center;
   gap: 0.75rem;

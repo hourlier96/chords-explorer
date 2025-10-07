@@ -35,6 +35,6 @@ To run the project locally, clone the repository and setup project with:
 
 ```bash
 git clone https://github.com/hourlier96/chords-analyzer.git
-cd chords-analyzer
+cd chords-explorer
 make install
 make run

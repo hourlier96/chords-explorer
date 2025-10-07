@@ -14,11 +14,6 @@ export const NOTES = [
 ]
 export const NOTES_FLAT = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 export const ENHARMONIC_EQUIVALENTS = {
-  'C#': 'Db',
-  'D#': 'Eb',
-  'F#': 'Gb',
-  'G#': 'Ab',
-  'A#': 'Bb',
   Db: 'C#',
   Eb: 'D#',
   Gb: 'F#',
@@ -31,14 +26,15 @@ export const QUALITIES = [
     options: [
       { value: '', text: 'Majeur' },
       { value: '6', text: 'Majeur 6' },
-      { value: 'add9', text: 'Add 9' },
       { value: '6/9', text: 'Majeur 6/9' },
-      { value: 'maj7', text: 'Majeur 7' },
+      { value: 'add9', text: 'Add 9' },
+      { value: 'add11', text: 'Add 11' },
+      { value: 'maj7', text: 'Majeur 7 (Δ)' },
       { value: 'maj9', text: 'Majeur 9' },
+      { value: 'maj11', text: 'Majeur 11' },
       { value: 'maj13', text: 'Majeur 13' },
-      { value: 'maj7#5', text: 'Majeur 7#5' }, // Augmented Major
-      { value: 'maj7b5', text: 'Majeur 7b5' }, // Lydian dominant related
-      { value: 'maj7#11', text: 'Majeur 7#11' } // Lydian related
+      { value: 'maj7#5', text: 'Majeur 7♯5' },
+      { value: 'maj7b5', text: 'Majeur 7♭5' }
     ]
   },
   {
@@ -46,6 +42,7 @@ export const QUALITIES = [
     options: [
       { value: 'm', text: 'Mineur' },
       { value: 'm6', text: 'Mineur 6' },
+      { value: 'm(6/9)', text: 'Mineur 6/9' },
       { value: 'm(add9)', text: 'm(add9)' },
       { value: 'm7', text: 'Mineur 7' },
       { value: 'm9', text: 'Mineur 9' },
@@ -60,6 +57,7 @@ export const QUALITIES = [
       { value: '7', text: '7' },
       { value: '9', text: '9' },
       { value: '11', text: '11' },
+      { value: '11(no3)', text: '11 (no 3rd)' },
       { value: '13', text: '13' },
       { value: '7b5', text: '7♭5' },
       { value: '7#5', text: '7♯5' },
@@ -67,20 +65,18 @@ export const QUALITIES = [
       { value: '7#9', text: '7♯9' },
       { value: '7#11', text: '7♯11' },
       { value: '7b13', text: '7♭13' },
-      { value: '13#11', text: '13♯11' }
+      { value: '9b5', text: '9♭5' },
+      { value: '9#5', text: '9♯5' }
     ]
   },
   {
     label: 'Dominantes Altérées',
     options: [
+      { value: 'alt7', text: '7alt' },
       { value: '7b9b5', text: '7♭9♭5' },
       { value: '7b9#5', text: '7♭9♯5' },
       { value: '7#9b5', text: '7♯9♭5' },
-      { value: '7#9#5', text: '7♯9♯5' },
-      { value: '7b9#11', text: '7♭9♯11' },
-      { value: '7#9#11', text: '7♯9♯11' },
-      { value: '7b9b13', text: '7♭9♭13' },
-      { value: '7#9b13', text: '7♯9♭13' }
+      { value: '7#9#5', text: '7♯9♯5' }
     ]
   },
   {
@@ -90,40 +86,48 @@ export const QUALITIES = [
       { value: 'sus4', text: 'sus4' },
       { value: '7sus2', text: '7sus2' },
       { value: '7sus4', text: '7sus4' },
-      { value: '9sus4', text: '9sus4' },
-      { value: '13sus4', text: '13sus4' }
+      { value: '9sus4', text: '9sus4' }
     ]
   },
   {
     label: 'Diminués',
     options: [
-      { value: 'dim', text: 'Diminué' },
-      { value: 'dim7', text: 'Diminué 7' },
-      { value: 'm7b5', text: 'm7b5' } // Half-diminished often grouped here
+      { value: 'dim', text: 'Diminué (°)' },
+      { value: 'dim7', text: 'Diminué 7 (°7)' },
+      { value: 'm7b5', text: 'm7b5 (ø)' } // Demi-diminué
     ]
   },
   {
     label: 'Augmentés',
-    options: [{ value: 'aug', text: 'Augmenté' }]
+    options: [{ value: 'aug', text: 'Augmenté (+)' }]
   },
   {
     label: 'Autres',
-    options: [{ value: '5', text: 'Power Chord' }]
+    options: [
+      { value: '5', text: 'Power Chord' },
+      { value: 'quartal', text: 'Quartal' },
+      { value: 'mu', text: 'Mu Major (μ)' },
+      { value: 'split3', text: 'Split-third' }
+    ]
   }
 ]
 
 export const CHORD_FORMULAS = {
+  // --- Triades de base ---
   '': [0, 4, 7],
   M: [0, 4, 7],
   maj: [0, 4, 7],
   m: [0, 3, 7],
   min: [0, 3, 7],
+  '-': [0, 3, 7],
   dim: [0, 3, 6],
   d: [0, 3, 6],
+  '°': [0, 3, 6],
   aug: [0, 4, 8],
   '+': [0, 4, 8],
   5: [0, 7],
 
+  // --- Accords Suspendus ---
   sus2: [0, 2, 7],
   sus4: [0, 5, 7],
   '7sus2': [0, 2, 7, 10],
@@ -131,25 +135,42 @@ export const CHORD_FORMULAS = {
   '9sus4': [0, 5, 7, 10, 14],
   '13sus4': [0, 5, 7, 10, 14, 21],
 
+  // --- Accords "Add" ---
+  add2: [0, 4, 7, 14],
+  add4: [0, 4, 7, 17],
   add9: [0, 4, 7, 14],
+  add11: [0, 4, 7, 17],
   'm(add9)': [0, 3, 7, 14],
 
+  // --- Accords de Sixte ---
   6: [0, 4, 7, 9],
   m6: [0, 3, 7, 9],
+  '-6': [0, 3, 7, 9],
   '6/9': [0, 4, 7, 9, 14],
+  'm(6/9)': [0, 3, 7, 9, 14],
 
+  // --- Accords de Septième ---
   7: [0, 4, 7, 10],
   maj7: [0, 4, 7, 11],
+  M7: [0, 4, 7, 11],
+  Δ: [0, 4, 7, 11],
   m7: [0, 3, 7, 10],
+  min7: [0, 3, 7, 10],
+  '-7': [0, 3, 7, 10],
   dim7: [0, 3, 6, 9],
+  '°7': [0, 3, 6, 9],
   m7b5: [0, 3, 6, 10],
+  ø: [0, 3, 6, 10],
   'm(maj7)': [0, 3, 7, 11],
+  mM7: [0, 3, 7, 11],
   maj7b5: [0, 4, 6, 11],
   'maj7#5': [0, 4, 8, 11],
   'maj7#11': [0, 4, 7, 11, 18],
 
+  // --- Accords de Septième de Dominante ---
   '7b5': [0, 4, 6, 10],
   '7#5': [0, 4, 8, 10],
+  '+7': [0, 4, 8, 10],
   '7b9': [0, 4, 7, 10, 13],
   '7b13': [0, 4, 7, 10, 20],
   '7#9': [0, 4, 7, 10, 15],
@@ -164,13 +185,110 @@ export const CHORD_FORMULAS = {
   '7#9#11': [0, 4, 7, 10, 15, 18],
   '7b9b13': [0, 4, 7, 10, 13, 20],
   '7#9b13': [0, 4, 7, 10, 15, 20],
+
+  // --- Accords étendus ---
   9: [0, 4, 7, 10, 14],
   maj9: [0, 4, 7, 11, 14],
+  M9: [0, 4, 7, 11, 14],
   m9: [0, 3, 7, 10, 14],
+  '-9': [0, 3, 7, 10, 14],
   11: [0, 4, 7, 10, 14, 17],
+  '11(no3)': [0, 7, 10, 14, 17],
   m11: [0, 3, 7, 10, 14, 17],
+  '-11': [0, 3, 7, 10, 14, 17],
+  maj11: [0, 4, 7, 11, 14, 17],
   13: [0, 4, 7, 10, 14, 21],
   '13#11': [0, 4, 7, 10, 14, 18, 21],
   m13: [0, 3, 7, 10, 14, 21],
-  maj13: [0, 4, 7, 11, 14, 21]
+  '-13': [0, 3, 7, 10, 14, 21],
+  maj13: [0, 4, 7, 11, 14, 21],
+
+  // --- Autres ---
+  quartal: [0, 5, 10],
+  split3: [0, 3, 4, 7],
+  mu: [0, 4, 14]
+}
+
+// Normalized chord formulas with modulos for detection
+export const CHORD_FORMULAS_NORMALIZED = {
+  '': [0, 4, 7],
+  M: [0, 4, 7],
+  maj: [0, 4, 7],
+  m: [0, 3, 7],
+  min: [0, 3, 7],
+  '-': [0, 3, 7],
+  dim: [0, 3, 6],
+  '°': [0, 3, 6],
+  aug: [0, 4, 8],
+  '+': [0, 4, 8],
+  5: [0, 7],
+
+  7: [0, 4, 7, 10],
+  maj7: [0, 4, 7, 11],
+  M7: [0, 4, 7, 11],
+  Δ: [0, 4, 7, 11],
+  m7: [0, 3, 7, 10],
+  min7: [0, 3, 7, 10],
+  '-7': [0, 3, 7, 10],
+  dim7: [0, 3, 6, 9],
+  '°7': [0, 3, 6, 9],
+  m7b5: [0, 3, 6, 10],
+  ø: [0, 3, 6, 10],
+  'm(maj7)': [0, 3, 7, 11],
+  mM7: [0, 3, 7, 11],
+  aug7: [0, 4, 8, 10],
+  '7#5': [0, 4, 8, 10],
+  '+7': [0, 4, 8, 10],
+  'maj7#5': [0, 4, 8, 11],
+  'M7#5': [0, 4, 8, 11],
+  maj7b5: [0, 4, 6, 11],
+
+  6: [0, 4, 7, 9],
+  m6: [0, 3, 7, 9],
+  '-6': [0, 3, 7, 9],
+
+  sus2: [0, 2, 7],
+  sus4: [0, 5, 7],
+  add9: [0, 4, 7, 2], // 14 % 12 = 2
+  add2: [0, 4, 7, 2], // 14 % 12 = 2
+  'm(add9)': [0, 3, 7, 2], // 14 % 12 = 2
+  add11: [0, 4, 7, 5], // 17 % 12 = 5
+  add4: [0, 4, 7, 5], // 17 % 12 = 5
+  '6/9': [0, 4, 7, 9, 2], // 14 % 12 = 2
+  'm(6/9)': [0, 3, 7, 9, 2], // 14 % 12 = 2
+  '7sus2': [0, 2, 7, 10],
+  '7sus4': [0, 5, 7, 10],
+  '9sus4': [0, 5, 7, 10, 2], // 14 % 12 = 2
+
+  9: [0, 4, 7, 10, 2], // 14 % 12 = 2
+  maj9: [0, 4, 7, 11, 2], // 14 % 12 = 2
+  M9: [0, 4, 7, 11, 2], // 14 % 12 = 2
+  m9: [0, 3, 7, 10, 2], // 14 % 12 = 2
+  '-9': [0, 3, 7, 10, 2], // 14 % 12 = 2
+  11: [0, 4, 7, 10, 2, 5], // 14%12=2, 17%12=5
+  '11(no3)': [0, 7, 10, 2, 5],
+  maj11: [0, 4, 7, 11, 2, 5],
+  m11: [0, 3, 7, 10, 2, 5],
+  '-11': [0, 3, 7, 10, 2, 5],
+  13: [0, 4, 7, 10, 2, 9], // 14%12=2, 21%12=9
+  maj13: [0, 4, 7, 11, 2, 9],
+  m13: [0, 3, 7, 10, 2, 9],
+  '-13': [0, 3, 7, 10, 2, 9],
+
+  '7b5': [0, 4, 6, 10],
+  '7b9': [0, 4, 7, 10, 1], // 13 % 12 = 1
+  '7#9': [0, 4, 7, 10, 3], // 15 % 12 = 3
+  '7#11': [0, 4, 7, 10, 6], // 18 % 12 = 6
+  '7b13': [0, 4, 7, 10, 8], // 20 % 12 = 8
+  '9b5': [0, 4, 6, 10, 2], // 14 % 12 = 2
+  '9#5': [0, 4, 8, 10, 2], // 14 % 12 = 2
+  '7b9b5': [0, 4, 6, 10, 1],
+  '7b9#5': [0, 4, 8, 10, 1],
+  '7#9b5': [0, 4, 6, 10, 3],
+  '7#9#5': [0, 4, 8, 10, 3],
+  alt7: [0, 4, 10, 1, 6], // 13%12=1, 18%12=6
+
+  quartal: [0, 5, 10],
+  split3: [0, 3, 4, 7],
+  mu: [0, 4, 2] // 14 % 12 = 2
 }

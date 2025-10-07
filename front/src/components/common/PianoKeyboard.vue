@@ -2,12 +2,11 @@
   <div class="piano-container" ref="pianoContainer">
     <div class="piano-keyboard">
       <div v-for="key in whiteKeys" :key="key.note" class="white-key-wrapper">
-        <div :class="getNoteClasses(key.note, 'white')" @click="playNote(key.note)"></div>
-
+        <div :class="getNoteClasses(key.note, 'white')" @click="clickNote(key.note)"></div>
         <div
           v-if="key.blackKey"
           :class="getNoteClasses(key.blackKey, 'black')"
-          @click.stop="playNote(key.blackKey)"
+          @click.stop="clickNote(key.blackKey)"
         ></div>
       </div>
     </div>
@@ -16,10 +15,12 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import { piano } from '@/sampler.js'
 import { whiteKeys } from '@/keyboard.js'
+import { piano } from '@/sampler.js'
 
+const emit = defineEmits(['add-note', 'remove-note'])
 const pianoContainer = ref(null)
+const clickedNote = ref([])
 
 const props = defineProps({
   activeNotes: {
@@ -40,16 +41,28 @@ const normalizedActiveNotes = computed(() => {
 
 function getNoteClasses(note, type) {
   const isActive = normalizedActiveNotes.value.includes(note)
+  const isLocallyActive = clickedNote.value.includes(note)
   return {
     'piano-key': true,
     white: type === 'white',
     black: type === 'black',
-    active: isActive
+    active: isActive || isLocallyActive
   }
 }
 
-async function playNote(note) {
-  piano.triggerAttackRelease(note, '8n')
+function clickNote(note) {
+  const isParentActive = normalizedActiveNotes.value.includes(note)
+  const isLocallyActive = clickedNote.value.includes(note)
+  const isVisuallyActive = isParentActive || isLocallyActive
+
+  if (isVisuallyActive) {
+    emit('remove-note', note)
+    clickedNote.value = clickedNote.value.filter((n) => n !== note)
+  } else {
+    emit('add-note', note)
+    clickedNote.value.push(note)
+    piano.triggerAttackRelease(note, '8n')
+  }
 }
 
 onMounted(() => {
@@ -96,8 +109,8 @@ onMounted(() => {
 }
 
 .piano-key.white {
-  width: 40px;
-  height: 180px;
+  width: 30px;
+  height: 110px;
   background-color: #f8f8f8;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -110,9 +123,9 @@ onMounted(() => {
 .piano-key.black {
   position: absolute;
   top: 0;
-  right: -14px;
-  width: 28px;
-  height: 110px;
+  right: -10px;
+  width: 19px;
+  height: 63px;
   background-color: #222;
   z-index: 1;
   border-radius: 4px;

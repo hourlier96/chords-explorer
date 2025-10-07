@@ -52,9 +52,21 @@
             </div>
           </div>
           <div class="inversion-control-footer">
-            <button @click="changeInversion(-1)" class="inversion-button">-</button>
-            <span>Position {{ chord.inversion + 1 }}</span>
-            <button @click="changeInversion(1)" class="inversion-button">+</button>
+            <v-btn
+              @click="changeInversion(-1)"
+              class="inversion-button"
+              :disabled="chord?.notes?.length > 0"
+            >
+              -
+            </v-btn>
+            <span v-if="chord?.notes === undefined">Position {{ chord.inversion + 1 }}</span>
+            <v-btn
+              @click="changeInversion(1)"
+              class="inversion-button"
+              :disabled="chord?.notes?.length > 0"
+            >
+              +
+            </v-btn>
           </div>
         </div>
       </div>
@@ -68,12 +80,13 @@ import { ref, computed, watch } from 'vue'
 import { QUALITIES, NOTES } from '@/constants.js'
 import { piano, getNotesForChord } from '@/sampler.js'
 import { ALL_PLAYABLE_NOTES } from '@/keyboard.js'
+import { ENHARMONIC_EQUIVALENTS } from '@/constants.js'
 
 const props = defineProps({
   modelValue: { type: Object, default: null }
 })
 
-const emit = defineEmits(['update:modelValue', 'close'])
+const emit = defineEmits(['update:modelValue'])
 
 const chord = computed({
   get: () => props.modelValue,
@@ -117,14 +130,14 @@ function isNoteActive(note) {
 function updateChord(key, value) {
   const newChord = { ...chord.value, [key]: value }
   chord.value = newChord
+  delete newChord.notes
   piano.play(newChord)
 }
 
 const normalizeNote = (note) => {
-  const noteMap = { Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#' }
   const octave = note.slice(-1)
   const root = note.slice(0, -1)
-  const mappedRoot = noteMap[root] || root
+  const mappedRoot = ENHARMONIC_EQUIVALENTS[root] || root
   return mappedRoot + octave
 }
 
