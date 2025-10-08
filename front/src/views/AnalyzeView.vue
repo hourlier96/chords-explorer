@@ -49,7 +49,6 @@
     </v-row>
   </v-container>
 </template>
-
 <script lang="ts" setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS_NORMALIZED, NOTES_FLAT } from '@/constants'

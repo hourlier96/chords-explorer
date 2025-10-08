@@ -1,6 +1,5 @@
 <template>
   <v-card outlined>
-    <v-card-title>Éditeur d'accord</v-card-title>
     <div v-if="chord" class="editor-content-wrapper">
       <div class="editor-content">
         <div class="root-note-selector">

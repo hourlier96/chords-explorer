@@ -1,134 +1,104 @@
 <template>
   <div class="detailed-analysis-container">
-    <div class="analysis-header">
-      <div class="left-controls">
-        <PlayerControls
-          :is-playing="isPlaying"
-          v-model:time-signature="timeSignature"
-          v-model:is-metronome-active="isMetronomeActive"
-          v-model:is-looping="isLooping"
-          @play="playEntireProgression"
-          @stop="stopSound"
-        />
-
-        <v-tooltip location="top" text="Dominantes secondaires"> </v-tooltip>
-      </div>
-    </div>
-
-    <div ref="gridContainerRef" class="progression-grid-container">
-      <div class="substitution-header">
-        <div v-if="!isSubstitution" class="mode-selector-wrapper with-icon">
-          <v-menu location="bottom">
-            <template #activator="{ props }">
-              <div class="mode-selector" v-bind="props">
-                <span>{{ globalModeLabel }}</span>
-                <v-icon icon="mdi-chevron-down" class="selector-icon"></v-icon>
-              </div>
-            </template>
-            <v-list dense class="mode-selection-list">
-              <v-list-item @click="selectedMode = null" class="list-item-reset">
-                <v-list-item-title>Progression d'origine</v-list-item-title>
-              </v-list-item>
-              <v-list-item v-for="mode in availableModes" :key="mode" @click="selectedMode = mode">
-                <v-list-item-title>{{ mode }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
-
-        <div v-else>
-          <h3 class="analysis-grid-title">{{ title }}</h3>
-        </div>
-
-        <div v-if="!isSubstitution" class="legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background-color: #2ecc71"></div>
-            <span>Diatonique</span>
+    <ProgressionTimeline
+      :items="displayedProgression"
+      :play-callback="handlePlayItemAnalysis"
+      :draggable="false"
+    >
+      <template #header>
+        <div class="substitution-header">
+          <div v-if="!isSubstitution" class="mode-selector-wrapper with-icon">
+            <v-menu location="bottom">
+              <template #activator="{ props }">
+                <div class="mode-selector" v-bind="props">
+                  <span>{{ globalModeLabel }}</span>
+                  <v-icon icon="mdi-chevron-down" class="selector-icon"></v-icon>
+                </div>
+              </template>
+              <v-list dense class="mode-selection-list">
+                <v-list-item @click="selectedMode = null" class="list-item-reset">
+                  <v-list-item-title>Progression d'origine</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  v-for="mode in availableModes"
+                  :key="mode"
+                  @click="selectedMode = mode"
+                >
+                  <v-list-item-title>{{ mode }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background-color: #f1c40f"></div>
-            <span>Emprunts</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background-color: red"></div>
-            <span>Hors tonalité</span>
+          <div v-if="!isSubstitution" class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background-color: #2ecc71"></div>
+              <span>Diatonique</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background-color: #f1c40f"></div>
+              <span>Emprunts</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background-color: red"></div>
+              <span>Hors tonalité</span>
+            </div>
           </div>
         </div>
-      </div>
-      <TimelineGrid
-        :total-beats="totalBeats"
-        :beats-per-measure="beatsPerMeasure"
-        :beat-width="BEAT_WIDTH"
-        :is-playing="isPlaying"
-        :playhead-position="playheadPosition"
-        @seek="handleSeek"
-      />
-      <div
-        class="segments-track"
-        :style="{
-          '--total-beats': totalBeats,
-          '--beat-width': `${BEAT_WIDTH}px`
-        }"
-      >
+      </template>
+
+      <template #above-track>
         <div
-          v-for="segment in harmonicSegments"
-          :key="segment.key"
-          class="segment-bar"
-          :style="{ gridColumn: `${segment.start} / span ${segment.duration}` }"
-          :class="{ 'has-local-override': segment.hasLocalOverride }"
-        >
-          <v-menu activator="parent" location="bottom">
-            <v-list dense class="mode-selection-list">
-              <v-list-item @click="updateSegmentMode(segment.key, null)" class="list-item-reset">
-                <v-list-item-title>Mode d'origine</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                v-for="mode in availableModes"
-                :key="mode"
-                @click="updateSegmentMode(segment.key, mode)"
-              >
-                <v-list-item-title>{{ mode }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-
-          <v-tooltip location="top" :text="segment.explanation">
-            <template #activator="{ props }">
-              <span v-bind="props" class="segment-label"
-                >{{ segment.label }}
-                <v-icon icon="mdi-chevron-down" size="x-small" class="segment-icon"></v-icon
-              ></span>
-            </template>
-          </v-tooltip>
-        </div>
-      </div>
-      <div
-        class="chords-track"
-        :style="{
-          '--total-beats': totalBeats,
-          '--beat-width': `${BEAT_WIDTH}px`
-        }"
-      >
-        <div
-          v-for="(item, index) in displayedProgression"
-          :key="item.id"
-          class="chord-wrapper"
+          class="segments-track"
           :style="{
-            gridColumn: `${item.start} / span ${item.duration}`
+            '--total-beats': totalBeatsForCss,
+            '--beat-width': `${BEAT_WIDTH}px`
           }"
-          :class="{ 'is-playing-halo': index === currentlyPlayingIndex }"
         >
-          <AnalysisCard
-            :piano="piano"
-            :item="item"
-            :analysis="analysis"
-            :is-substitution="isSubstitution"
-            :beat-width="BEAT_WIDTH"
-            @update:item="(newItem) => updateProgressionItem(index, newItem)"
-          />
+          <div
+            v-for="segment in harmonicSegments"
+            :key="segment.key"
+            class="segment-bar"
+            :style="{ gridColumn: `${segment.start} / span ${segment.duration}` }"
+            :class="{ 'has-local-override': segment.hasLocalOverride }"
+          >
+            <v-menu activator="parent" location="bottom">
+              <v-list dense class="mode-selection-list">
+                <v-list-item @click="updateSegmentMode(segment.key, null)" class="list-item-reset">
+                  <v-list-item-title>Mode d'origine</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  v-for="mode in availableModes"
+                  :key="mode"
+                  @click="updateSegmentMode(segment.key, mode)"
+                >
+                  <v-list-item-title>{{ mode }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+            <v-tooltip location="top" :text="segment.explanation">
+              <template #activator="{ props }">
+                <span v-bind="props" class="segment-label"
+                  >{{ segment.label }}
+                  <v-icon icon="mdi-chevron-down" size="x-small" class="segment-icon"></v-icon
+                ></span>
+              </template>
+            </v-tooltip>
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+
+      <template #item="{ item, index }">
+        <AnalysisCard
+          :piano="piano"
+          :item="item"
+          :analysis="analysis"
+          :is-substitution="isSubstitution"
+          :beat-width="BEAT_WIDTH"
+          @update:item="(newItem) => updateProgressionItem(index, newItem)"
+        />
+      </template>
+    </ProgressionTimeline>
   </div>
 </template>
 
@@ -138,9 +108,8 @@ import { ref, computed, watch } from 'vue'
 import { BEAT_WIDTH, useStatePlayer } from '@/composables/useStatePlayer.js'
 import { sleep } from '@/utils.js'
 import { useTempoStore } from '@/stores/tempo.js'
+import ProgressionTimeline from '@/components/common/ProgressionTimeline.vue'
 import AnalysisCard from '@/components/analysis/AnalysisCard.vue'
-import TimelineGrid from '@/components/common/TimelineGrid.vue'
-import PlayerControls from '@/components/common/PlayerControls.vue'
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -153,10 +122,13 @@ const props = defineProps({
 const emit = defineEmits(['update:progressionItems'])
 
 const tempoStore = useTempoStore()
-const selectedMode = ref(null) // Pour le choix global
-const segmentModes = ref({}) // Pour les choix locaux par segment
+const selectedMode = ref(null)
+const segmentModes = ref({})
 const progressionState = ref([])
-const gridContainerRef = ref(null)
+
+const totalBeatsForCss = computed(() => {
+  return displayedProgression.value.reduce((acc, chord) => acc + chord.duration, 0) || 8
+})
 
 watch(
   () => props.progressionItems,
@@ -261,15 +233,6 @@ function updateProgressionItem(index, newItem) {
   emit('update:progressionItems', newProgression)
 }
 
-const parseChordString = (chordStr, inversion = 0) => {
-  if (!chordStr) return null
-  const rootMatch = chordStr.match(/^[A-G][#b]?/)
-  if (!rootMatch) return null
-  const root = rootMatch[0]
-  const quality = chordStr.substring(root.length)
-  return { root, quality, inversion: inversion }
-}
-
 const handlePlayItemAnalysis = async ({ item }) => {
   if (!item.chord) return
   let chordDurationMs = item.duration * tempoStore.beatDurationMs
@@ -278,78 +241,14 @@ const handlePlayItemAnalysis = async ({ item }) => {
     await sleep(chordDurationMs)
   }
 }
-
-const {
-  playheadPosition,
-  beatsPerMeasure,
-  totalBeats,
-  isPlaying,
-  currentlyPlayingIndex,
-  timeSignature,
-  isMetronomeActive,
-  isLooping,
-  playEntireProgression,
-  stopSound,
-  seek
-} = useStatePlayer(displayedProgression, {
-  onPlayItemAsync: handlePlayItemAnalysis
-})
-
-function findClosestChordStartBeat(beat) {
-  const progression = displayedProgression.value
-  const targetChord = progression.find(
-    (chord) => beat + 1 >= chord.start && beat + 1 < chord.start + chord.duration
-  )
-  if (targetChord) {
-    return targetChord.start - 1
-  }
-  return beat
-}
-
-async function handleSeek(targetBeat) {
-  const snappedBeat = findClosestChordStartBeat(targetBeat)
-
-  const wasPlaying = isPlaying.value
-
-  if (wasPlaying) {
-    await stopSound()
-    seek(snappedBeat) // On se positionne au début de l'accord
-    playEntireProgression() // La lecture reprendra de ce point
-  } else {
-    seek(snappedBeat) // On positionne aussi la tête de lecture quand la lecture est en pause
-  }
-}
-
-watch(playheadPosition, (newPixelPosition) => {
-  if (!isPlaying.value || !gridContainerRef.value) return
-  const container = gridContainerRef.value
-  const containerWidth = container.clientWidth
-  const targetScrollLeft = newPixelPosition - containerWidth / 2
-  container.scrollTo({
-    left: targetScrollLeft,
-    behavior: 'auto'
-  })
-})
 </script>
 
 <style scoped>
-/* Les styles restent inchangés */
 .detailed-analysis-container {
   background-color: #2f2f2f;
   border-radius: 8px;
   padding: 1rem;
-}
-
-.analysis-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding: 0 0.5rem;
-  border-bottom: 1px solid #4f4f4f;
-  padding-bottom: 0.8rem;
-  gap: 1rem;
-  flex-wrap: wrap;
+  overflow-x: auto;
 }
 
 .mode-selector-wrapper {
@@ -403,79 +302,6 @@ watch(playheadPosition, (newPixelPosition) => {
   gap: 0.75rem;
   flex-shrink: 0;
   margin-bottom: 0.5rem;
-}
-.control-icon-button {
-  background-color: #4a4a4a;
-  color: #edf2f4;
-  border: 1px solid #555;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s ease;
-}
-.control-icon-button:hover:not(:disabled) {
-  background-color: #5a5a5a;
-  border-color: #777;
-}
-.control-icon-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.control-icon-button.is-active {
-  background-color: #6497cc;
-  color: #000;
-  border-color: #5078a0;
-}
-.time-signature-selector {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #252525;
-  border-radius: 8px;
-  padding: 5px;
-  border: 1px solid #444;
-  color: #bbb;
-}
-.radio-label {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  color: #bbb;
-  background-color: transparent;
-  font-size: 0.9rem;
-}
-.radio-label-sm {
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  color: #bbb;
-  background-color: transparent;
-  font-size: 0.9rem;
-}
-.radio-label-sm.active {
-  background-color: #007bff;
-  color: white;
-  font-weight: 500;
-}
-.radio-label-sm:not(.active):hover {
-  background-color: #3f3f3f;
-}
-.radio-label-sm input[type='radio'] {
-  display: none;
-}
-
-.progression-grid-container {
-  overflow-x: auto;
-  padding: 5px;
-  background-color: #252525;
-  border: 1px solid #444;
-  border-radius: 8px;
 }
 
 .segments-track {
@@ -554,22 +380,6 @@ watch(playheadPosition, (newPixelPosition) => {
   right: 0.5rem;
   pointer-events: none;
   opacity: 0.7;
-}
-
-.chords-track {
-  display: grid;
-  grid-template-columns: repeat(var(--total-beats, 8), var(--beat-width));
-  grid-auto-rows: minmax(100px, auto);
-  align-items: stretch;
-}
-
-.chord-wrapper {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: box-shadow 0.3s ease-in-out;
-  border-radius: 12px;
 }
 
 .is-playing-halo .analysis-card {
