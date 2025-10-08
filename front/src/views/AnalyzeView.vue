@@ -39,6 +39,14 @@
         </div>
       </v-col>
     </v-row>
+    <v-row v-if="analysisResults">
+      <AnalysisGrid
+        :title="`${analysisResults.tonic} ${analysisResults.mode}`"
+        :progression-items="analysisResults.quality_analysis"
+        :analysis="analysisStore.lastAnalysis"
+        :piano="piano"
+      />
+    </v-row>
   </v-container>
 </template>
 
@@ -50,6 +58,7 @@ import { piano, getNotesForChord, noteToMidi } from '@/sampler.js'
 import ChordProgressionBuilder from '@/components/progression/ChordProgressionBuilder.vue'
 import PianoKeyboard from '@/components/common/PianoKeyboard.vue'
 import ChordEditor from '@/components/progression/ChordEditor.vue'
+import AnalysisGrid from '@/components/analysis/AnalysisGrid.vue'
 
 const analysisStore = useAnalysisStore()
 
@@ -151,6 +160,8 @@ const selectedAiModel = ref('gemini-2.5-flash')
 const selectedChordNotes = ref([])
 const isRecalculating = ref(false)
 const noMatch = ref(false)
+
+const analysisResults = computed(() => analysisStore.lastAnalysis.result)
 
 function launchEdition(chord) {
   editingChordId.value = chord.id

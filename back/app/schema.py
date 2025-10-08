@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -9,6 +9,7 @@ class ChordItem(BaseModel):
     quality: str
     inversion: int = 0
     duration: int = 2
+    notes: Optional[List[str]] = None
 
 
 class ProgressionRequest(BaseModel):

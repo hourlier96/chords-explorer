@@ -12,6 +12,7 @@ from app.tritone_substitution.generator import get_tritone_substitute
 from app.utils.borrowed_modes import get_borrowed_chords
 from app.utils.chords_analyzer import QualityAnalysisItem, analyze_chord_in_context
 from app.utils.common import get_note_from_index, get_note_index
+from app.utils.mode_detection_gemini import detect_tonic_and_mode
 from constants import MAJOR_MODES_DATA, MODES_DATA
 
 load_dotenv()
@@ -82,52 +83,7 @@ def get_all_substitutions(request: ProgressionRequest):
 
     progression = [f"{item.root}{item.quality}" for item in progression_data]
     try:
-        # analysis_result = detect_tonic_and_mode(progression, model)  # type: ignore
-        analysis_result = {
-            "global_analysis": {
-                "tonic": "C",
-                "mode": "Harmonic Minor",
-                "explanation": "La progression est fermement ancrée dans la tonalité de Do mineur. L'utilisation du Gaug (V+) et du G (V) majeurs indique l'emploi de la gamme de Do mineur harmonique, caractérisée par sa septième degré haussé (Si naturel) qui crée une dominante majeure.",
-            },
-            "harmonic_segments": [
-                {
-                    "start_index": 0,
-                    "end_index": 0,
-                    "tonic": "C",
-                    "mode": "Harmonic Minor",
-                    "explanation": "L'accord tonique (i) de Do mineur harmonique, établissant le centre tonal.",
-                },
-                {
-                    "start_index": 1,
-                    "end_index": 1,
-                    "tonic": "C",
-                    "mode": "Harmonic Minor",
-                    "explanation": "L'accord de sous-dominante (iv) de Do mineur harmonique.",
-                },
-                {
-                    "start_index": 2,
-                    "end_index": 2,
-                    "tonic": "C",
-                    "mode": "Harmonic Minor",
-                    "explanation": "L'accord de supertonique diminuée (ii°) de Do mineur harmonique, fonctionnant comme une pré-dominante.",
-                },
-                {
-                    "start_index": 3,
-                    "end_index": 3,
-                    "tonic": "C",
-                    "mode": "Harmonic Minor",
-                    "explanation": "L'accord de dominante augmentée (V+) de Do mineur harmonique. Le Sol augmenté (G-B-D#) est une variante du V, amplifiant la tension vers la tonique.",
-                },
-                {
-                    "start_index": 4,
-                    "end_index": 4,
-                    "tonic": "C",
-                    "mode": "Harmonic Minor",
-                    "explanation": "L'accord de dominante (V) de Do mineur harmonique. Après le V+, cet accord maintient la tension dominante, la quinte (D#) se résolvant chromatiquement vers Ré (D), préparant la résolution attendue vers l'accord de Do mineur.",
-                },
-            ],
-        }
-
+        analysis_result = detect_tonic_and_mode(progression, model)  # type: ignore
         global_analysis = analysis_result["global_analysis"]
         harmonic_segments = analysis_result["harmonic_segments"]
 
@@ -144,6 +100,8 @@ def get_all_substitutions(request: ProgressionRequest):
         for i, analyzed_chord in enumerate(quality_analysis):
             analyzed_chord["inversion"] = progression_data[i].inversion
             analyzed_chord["duration"] = progression_data[i].duration
+            if getattr(progression_data[i], "notes", None):
+                analyzed_chord["notes"] = progression_data[i].notes
 
         detected_tonic_index: int = get_note_index(global_tonic)
 
