@@ -16,11 +16,9 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { whiteKeys } from '@/keyboard.js'
-import { piano } from '@/sampler.js'
 
 const emit = defineEmits(['add-note', 'remove-note'])
 const pianoContainer = ref(null)
-const clickedNote = ref([])
 
 const props = defineProps({
   activeNotes: {
@@ -41,54 +39,37 @@ const normalizedActiveNotes = computed(() => {
 
 function getNoteClasses(note, type) {
   const isActive = normalizedActiveNotes.value.includes(note)
-  const isLocallyActive = clickedNote.value.includes(note)
   return {
     'piano-key': true,
     white: type === 'white',
     black: type === 'black',
-    active: isActive || isLocallyActive
+    active: isActive
   }
 }
 
 function clickNote(note) {
-  const isParentActive = normalizedActiveNotes.value.includes(note)
-  const isLocallyActive = clickedNote.value.includes(note)
-  const isVisuallyActive = isParentActive || isLocallyActive
+  const isActive = normalizedActiveNotes.value.includes(note)
 
-  if (isVisuallyActive) {
+  if (isActive) {
     emit('remove-note', note)
-    clickedNote.value = clickedNote.value.filter((n) => n !== note)
   } else {
     emit('add-note', note)
-    clickedNote.value.push(note)
-    piano.triggerAttackRelease(note, '8n')
   }
 }
 
 onMounted(() => {
-  // L'objet `pianoContainer.value` contient maintenant l'élément DOM réel
   const container = pianoContainer.value
-
   if (container) {
-    // 1. Calculer le milieu du contenu total (scrollable)
-    const scrollWidth = container.scrollWidth
-
-    // 2. Calculer la largeur visible du conteneur
-    const clientWidth = container.clientWidth
-
-    // 3. Calculer la position pour centrer le contenu
-    const centerPosition = (scrollWidth - clientWidth) / 2
-
-    // 4. Appliquer le défilement horizontal
+    const centerPosition = (container.scrollWidth - container.clientWidth) / 2
     container.scrollLeft = centerPosition
   }
 })
 </script>
-
 <style scoped>
 .piano-container {
   overflow-x: auto;
   display: flex;
+  border-radius: 8px;
 }
 
 .piano-keyboard {

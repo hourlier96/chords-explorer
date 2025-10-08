@@ -64,7 +64,7 @@ function stopResize() {
   transition: width 0.1s ease-out;
 }
 .chord-button {
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   font-size: 17px;
   font-weight: 600;
   border-radius: 8px;
@@ -91,7 +91,6 @@ function stopResize() {
   font-weight: bold;
   cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
   line-height: 1;
 }

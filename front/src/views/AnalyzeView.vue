@@ -12,24 +12,31 @@
               @analyze="analyzeProgression()"
               :editing-chord-id="editingChordId"
               :active-chord-object="currentlyEditingChord"
-              @start-editing="(chord) => (editingChordId = chord.id)"
+              @play-chord="(chord) => launchEdition(chord)"
+              @start-editing="launchEdition($event)"
               @stop-editing="editingChordId = null"
-              @update:chord="updateChord"
             />
           </v-col>
         </v-row>
       </v-col>
       <v-col cols="5">
         <ChordEditor v-model="currentlyEditingChord" />
-        <div class="text-center">{{ noMatch ? 'Aucune correspondance trouvée' : '' }}</div>
+
         <PianoKeyboard
           v-if="currentlyEditingChord"
-          :key="selectedChordNotes.join('-')"
           :active-notes="selectedChordNotes"
-          class="mt-2"
+          class="mt-1"
           @add-note="(note) => recalculateChord(note, currentlyEditingChord, false)"
           @remove-note="(note) => recalculateChord(note, currentlyEditingChord, true)"
         />
+        <div class="text-center font-italic">
+          {{ noMatch ? 'Aucune correspondance trouvée' : '' }}
+          {{
+            !noMatch && currentlyEditingChord && !currentlyEditingChord?.notes
+              ? "Modifiez l'accord en cliquant sur les touches"
+              : ''
+          }}
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -39,7 +46,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS_NORMALIZED, NOTES_FLAT } from '@/constants'
 import { useAnalysisStore } from '@/stores/analysis.js'
-import { getNotesForChord, noteToMidi } from '@/sampler.js'
+import { piano, getNotesForChord, noteToMidi } from '@/sampler.js'
 import ChordProgressionBuilder from '@/components/progression/ChordProgressionBuilder.vue'
 import PianoKeyboard from '@/components/common/PianoKeyboard.vue'
 import ChordEditor from '@/components/progression/ChordEditor.vue'
@@ -49,38 +56,83 @@ const analysisStore = useAnalysisStore()
 const defaultProgression = [
   {
     id: 1,
-    root: 'C',
-    quality: 'm',
-    inversion: 2,
-    duration: 2
+    root: 'A',
+    quality: 'm7',
+    inversion: 0,
+    duration: 2,
+    notes: ['A2', 'C4', 'E4', 'G4']
   },
   {
     id: 2,
-    root: 'F',
-    quality: 'm',
-    inversion: 0,
-    duration: 2
-  },
-  {
-    id: 3,
-    root: 'D',
-    quality: 'dim',
-    inversion: 2,
-    duration: 2
-  },
-  {
-    id: 4,
-    root: 'G',
-    quality: 'aug',
-    inversion: 0,
-    duration: 1
-  },
-  {
-    id: 5,
     root: 'G',
     quality: '',
     inversion: 1,
-    duration: 1
+    duration: 2,
+    notes: ['B2', 'D4', 'G4']
+  },
+  {
+    id: 3,
+    root: 'C',
+    quality: '',
+    inversion: 0,
+    duration: 2,
+    notes: ['C3', 'G3', 'E4', 'G4']
+  },
+  {
+    id: 4,
+    root: 'F',
+    quality: 'maj7',
+    inversion: 0,
+    duration: 2,
+    notes: ['F2', 'A3', 'C4', 'E4']
+  },
+  {
+    id: 5,
+    root: 'D',
+    quality: 'm7',
+    inversion: 0,
+    duration: 2,
+    notes: ['D2', 'F3', 'A3', 'C4']
+  },
+  {
+    id: 6,
+    root: 'E',
+    quality: 'sus4',
+    inversion: 0,
+    duration: 1,
+    notes: ['E2', 'A3', 'B3']
+  },
+  {
+    id: 7,
+    root: 'E',
+    quality: '7',
+    inversion: 0,
+    duration: 1,
+    notes: ['G#2', 'G#3', 'B3', 'D4']
+  },
+  {
+    id: 9,
+    root: 'A',
+    quality: '9',
+    inversion: 0,
+    duration: 2,
+    notes: ['A2', 'G3', 'B3', 'C#4', 'E4']
+  },
+  {
+    id: 10,
+    root: 'D',
+    quality: '7',
+    inversion: 0,
+    duration: 2,
+    notes: ['D2', 'D4', 'F#4', 'A4', 'C4']
+  },
+  {
+    id: 11,
+    root: 'G',
+    quality: '',
+    inversion: 0,
+    duration: 4,
+    notes: ['G2', 'B3', 'D4', 'G4']
   }
 ]
 
@@ -99,6 +151,13 @@ const selectedAiModel = ref('gemini-2.5-flash')
 const selectedChordNotes = ref([])
 const isRecalculating = ref(false)
 const noMatch = ref(false)
+
+function launchEdition(chord) {
+  editingChordId.value = chord.id
+  selectedChordNotes.value = getNotesForChord(chord)
+  noMatch.value = false
+  piano.play(chord)
+}
 
 async function analyzeProgression() {
   isLoading.value = true
@@ -160,12 +219,6 @@ watch(
   },
   { deep: true }
 )
-
-function updateChord({ index, newChord }) {
-  if (index >= 0 && index < progression.value.length) {
-    progression.value[index] = newChord
-  }
-}
 
 /**
  * @param {string} noteClicked - La dernière note ajoutée ou retirée.

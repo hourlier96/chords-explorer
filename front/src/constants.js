@@ -72,7 +72,7 @@ export const QUALITIES = [
   {
     label: 'Dominantes Altérées',
     options: [
-      { value: 'alt7', text: '7alt' },
+      { value: '7alt', text: '7alt' },
       { value: '7b9b5', text: '7♭9♭5' },
       { value: '7b9#5', text: '7♭9♯5' },
       { value: '7#9b5', text: '7♯9♭5' },
@@ -279,6 +279,7 @@ export const CHORD_FORMULAS_NORMALIZED = {
   '7b9': [0, 4, 7, 10, 1], // 13 % 12 = 1
   '7#9': [0, 4, 7, 10, 3], // 15 % 12 = 3
   '7#11': [0, 4, 7, 10, 6], // 18 % 12 = 6
+  '7alt': [0, 4, 10, 1, 6], // 13%12=1, 18%12=6
   '7b13': [0, 4, 7, 10, 8], // 20 % 12 = 8
   '9b5': [0, 4, 6, 10, 2], // 14 % 12 = 2
   '9#5': [0, 4, 8, 10, 2], // 14 % 12 = 2

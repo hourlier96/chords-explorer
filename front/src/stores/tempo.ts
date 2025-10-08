@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useTempoStore = defineStore('tempo', {
   state: () => ({
-    bpm: 100
+    bpm: 85
   }),
 
   getters: {

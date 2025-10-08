@@ -13,174 +13,149 @@
       </div>
     </div>
     <v-card>
-      <v-tabs v-model="tab" bg-color="deep-purple-darken-4" centered>
-        <v-tab value="progression">Progression</v-tab>
-        <v-tab value="analyse">Analyse</v-tab>
-      </v-tabs>
+      <div class="builder-grid-layout">
+        <div
+          ref="gridContainerRef"
+          class="progression-grid-container"
+          @click="selectedChordIds.clear()"
+        >
+          <TimelineGrid
+            :total-beats="totalBeats"
+            :beats-per-measure="beatsPerMeasure"
+            :beat-width="BEAT_WIDTH"
+            :is-playing="isPlaying"
+            :playhead-position="playheadPosition"
+            @seek="handleSeek"
+          />
 
-      <v-window v-model="tab">
-        <v-window-item value="progression">
-          <div class="builder-grid-layout">
-            <div
-              ref="gridContainerRef"
-              class="progression-grid-container"
-              @click="selectedChordIds.clear()"
+          <div
+            class="chords-track"
+            :style="{
+              '--total-beats': totalBeats,
+              '--beat-width': `${BEAT_WIDTH}px`
+            }"
+          >
+            <draggable
+              :modelValue="progressionWithPositions"
+              @end="onDragEnd"
+              item-key="id"
+              class="draggable-container"
+              ghost-class="ghost"
             >
-              <TimelineGrid
-                :total-beats="totalBeats"
-                :beats-per-measure="beatsPerMeasure"
-                :beat-width="BEAT_WIDTH"
-                :is-playing="isPlaying"
-                :playhead-position="playheadPosition"
-                @seek="handleSeek"
-              />
-
-              <div
-                class="chords-track"
-                :style="{
-                  '--total-beats': totalBeats,
-                  '--beat-width': `${BEAT_WIDTH}px`
-                }"
-              >
-                <draggable
-                  :modelValue="progressionWithPositions"
-                  @end="onDragEnd"
-                  item-key="id"
-                  class="draggable-container"
-                  ghost-class="ghost"
+              <template #item="{ element: chord, index }">
+                <div
+                  class="chord-wrapper"
+                  :style="{
+                    gridColumn: `${chord.start} / span ${chord.duration}`
+                  }"
+                  :class="{
+                    'is-playing-halo': index === currentlyPlayingIndex
+                  }"
+                  @click.stop="handleChordClick(chord, $event)"
                 >
-                  <template #item="{ element: chord, index }">
-                    <div
-                      class="chord-wrapper"
-                      :style="{
-                        gridColumn: `${chord.start} / span ${chord.duration}`
-                      }"
-                      :class="{
-                        'is-playing-halo': index === currentlyPlayingIndex
-                      }"
-                      @click.stop="handleChordClick(chord, $event)"
-                    >
-                      <ChordCard
-                        :class="{
-                          'is-selected': selectedChordIds.has(chord.id)
-                        }"
-                        :modelValue="chord"
-                        :beat-width="BEAT_WIDTH"
-                        @update:modelValue="(newChord) => updateChord(index, newChord)"
-                        :is-editing="editingChordId === chord.id"
-                        :piano="piano"
-                        @remove="removeChord(chord.id)"
-                        @start-editing="startEditing(chord)"
-                        @stop-editing="stopEditing"
-                      />
-                    </div>
-                  </template>
-                </draggable>
-              </div>
-              <div class="footer-controls">
-                <button v-if="!showQuickImport" class="add-button" @click="addChord()">+</button>
-                <button v-if="!showQuickImport" class="add-button" @click="showQuickImport = true">
-                  <v-icon icon="mdi-keyboard" />
-                </button>
-                <div v-if="showQuickImport">
-                  <input
-                    type="text"
-                    v-model="quickImportText"
-                    placeholder="Ex: Cmaj7 G7"
-                    class="quick-import-input"
-                    @keyup.enter="processQuickImport"
+                  <ChordCard
+                    :class="{
+                      'is-selected': selectedChordIds.has(chord.id)
+                    }"
+                    :modelValue="chord"
+                    :beat-width="BEAT_WIDTH"
+                    @update:modelValue="(newChord) => updateChord(index, newChord)"
+                    :is-editing="editingChordId === chord.id"
+                    :piano="piano"
+                    @remove="removeChord(chord.id)"
+                    @start-editing="startEditing(chord)"
+                    @stop-editing="stopEditing"
                   />
-                  <div class="quick-import-buttons">
-                    <button @click="processQuickImport" class="quick-import-button">
-                      <v-icon icon="mdi-check" />
-                    </button>
-                    <button @click="cancelQuickImport" class="quick-import-button cancel">
-                      <v-icon icon="mdi-close" />
-                    </button>
-                  </div>
                 </div>
-                <v-tooltip v-if="!showQuickImport" location="top" text="Reset la progression">
-                  <template #activator="{ props }">
-                    <button v-bind="props" @click="removeAllChords" class="add-button">
-                      <v-icon icon="mdi-close" />
-                    </button>
-                  </template>
-                </v-tooltip>
+              </template>
+            </draggable>
+          </div>
+          <div class="footer-controls">
+            <button v-if="!showQuickImport" class="add-button" @click="addChord()">+</button>
+            <button v-if="!showQuickImport" class="add-button" @click="showQuickImport = true">
+              <v-icon icon="mdi-keyboard" />
+            </button>
+            <div v-if="showQuickImport">
+              <input
+                type="text"
+                v-model="quickImportText"
+                placeholder="Ex: Cmaj7 G7"
+                class="quick-import-input"
+                @keyup.enter="processQuickImport"
+              />
+              <div class="quick-import-buttons">
+                <button @click="processQuickImport" class="quick-import-button">
+                  <v-icon icon="mdi-check" />
+                </button>
+                <button @click="cancelQuickImport" class="quick-import-button cancel">
+                  <v-icon icon="mdi-close" />
+                </button>
               </div>
             </div>
+            <v-tooltip v-if="!showQuickImport" location="top" text="Reset la progression">
+              <template #activator="{ props }">
+                <button v-bind="props" @click="removeAllChords" class="add-button">
+                  <v-icon icon="mdi-close" />
+                </button>
+              </template>
+            </v-tooltip>
           </div>
+        </div>
+      </div>
 
-          <div class="analyze-section-container">
-            <div class="model-selector">
-              <label :class="{ active: aiModel === 'gemini-2.5-flash' }" class="radio-label">
-                <input
-                  type="radio"
-                  name="ai-model"
-                  value="gemini-2.5-flash"
-                  :checked="aiModel === 'gemini-2.5-flash'"
-                  @change="$emit('update:aiModel', 'gemini-2.5-flash')"
-                />
-                Modèle Rapide
-              </label>
+      <div class="analyze-section-container">
+        <div class="model-selector">
+          <label :class="{ active: aiModel === 'gemini-2.5-flash' }" class="radio-label">
+            <input
+              type="radio"
+              name="ai-model"
+              value="gemini-2.5-flash"
+              :checked="aiModel === 'gemini-2.5-flash'"
+              @change="$emit('update:aiModel', 'gemini-2.5-flash')"
+            />
+            Modèle Rapide
+          </label>
 
-              <button
-                class="analyze-icon-button"
-                @click="onAnalyze"
-                :disabled="isLoading || progression.length === 0 || isProgressionUnchanged"
-                aria-label="Analyser la progression"
+          <button
+            class="analyze-icon-button"
+            @click="onAnalyze"
+            :disabled="isLoading || progression.length === 0 || isProgressionUnchanged"
+            aria-label="Analyser la progression"
+          >
+            <template v-if="isLoading">
+              <v-progress-circular indeterminate color="white" size="20" width="2" />
+            </template>
+            <template v-else>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
               >
-                <template v-if="isLoading">
-                  <v-progress-circular indeterminate color="white" size="20" width="2" />
-                </template>
-                <template v-else>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </template>
-              </button>
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </template>
+          </button>
 
-              <label :class="{ active: aiModel === 'gemini-2.5-pro' }" class="radio-label">
-                <input
-                  type="radio"
-                  name="ai-model"
-                  value="gemini-2.5-pro"
-                  :checked="aiModel === 'gemini-2.5-pro'"
-                  @change="$emit('update:aiModel', 'gemini-2.5-pro')"
-                />
-                Modèle Précis
-              </label>
-            </div>
-          </div>
-          <div v-if="error" class="error-message">{{ error }}</div>
-        </v-window-item>
-
-        <v-window-item value="analyse">
-          <v-container>
-            <v-row>
-              <v-col>
-                <div class="pa-4 text-center">
-                  <p class="text-h6">Résultats de l'analyse harmonique</p>
-                  <p class="text-body-1">
-                    Lancez une analyse depuis l'onglet "Progression" pour voir les résultats
-                    s'afficher ici.
-                  </p>
-                </div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-window-item>
-      </v-window>
+          <label :class="{ active: aiModel === 'gemini-2.5-pro' }" class="radio-label">
+            <input
+              type="radio"
+              name="ai-model"
+              value="gemini-2.5-pro"
+              :checked="aiModel === 'gemini-2.5-pro'"
+              @change="$emit('update:aiModel', 'gemini-2.5-pro')"
+            />
+            Modèle Précis
+          </label>
+        </div>
+      </div>
+      <div v-if="error" class="error-message">{{ error }}</div>
     </v-card>
   </div>
 </template>
@@ -209,7 +184,13 @@ const props = defineProps({
   aiModel: { type: String, required: true },
   editingChordId: { type: [Number, null], default: null }
 })
-const emit = defineEmits(['update:modelValue', 'analyze', 'update:aiModel', 'start-editing'])
+const emit = defineEmits([
+  'update:modelValue',
+  'analyze',
+  'update:aiModel',
+  'start-editing',
+  'play-chord'
+])
 
 const editingChordId = ref(null)
 const showQuickImport = ref(false)
@@ -225,8 +206,8 @@ const tab = ref('progression')
 
 const playChordItem = async ({ item, startOffsetBeats = 0 }) => {
   if (!item) return
+  emit('play-chord', item)
   piano.play(item)
-
   const remainingDurationInBeats = item.duration - startOffsetBeats
   const chordDurationMs = remainingDurationInBeats * tempoStore.beatDurationMs
 
@@ -656,7 +637,7 @@ onUnmounted(() => {
 .progression-grid-container {
   flex-grow: 1;
   overflow-x: auto;
-  padding: 0.5rem;
+  padding: 1rem 1rem 4rem 1rem;
   background-color: #252525;
   border: 1px solid #444;
   border-radius: 8px;
@@ -703,10 +684,19 @@ onUnmounted(() => {
 }
 
 .footer-controls {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
   display: flex;
-  justify-content: center;
-  padding-right: 1rem;
+  align-items: center;
   gap: 10px;
+
+  background-color: rgba(40, 40, 40, 0.75);
+  backdrop-filter: blur(8px);
+  padding: 8px 15px;
+  border-radius: 50px;
+  border: 1px solid #555;
 }
 
 .add-button {
@@ -768,6 +758,7 @@ onUnmounted(() => {
 
 .analyze-section-container {
   margin-top: 1rem;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
 }
