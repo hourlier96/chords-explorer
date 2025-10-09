@@ -3,6 +3,14 @@
     <h3 class="ml-4">Chords Explorer</h3>
     <v-app-bar-nav-icon />
     <v-spacer />
+    <v-btn
+      @click="analysisStore.toggleMidi"
+      :color="analysisStore.isMidiEnabled ? 'success' : 'grey'"
+      class="mr-2"
+    >
+      <v-icon left>mdi-piano</v-icon>
+      MIDI {{ analysisStore.isMidiEnabled ? 'ON' : 'OFF' }}
+    </v-btn>
     <v-btn @click="showLang = !showLang">
       <v-icon>
         <country-flag :country="getFlag(prefStore.lang)" size="normal" />
@@ -21,30 +29,24 @@
         <v-list-item-title>{{ item.title }}</v-list-item-title>
       </v-list-item>
     </v-list>
-
-    <v-btn @click="prefStore.toggleTheme(theme)">
-      <v-icon v-if="prefStore.isDark" icon="fa:fa fa-moon" />
-      <v-icon v-else icon="fa:fa fa-sun" />
-    </v-btn>
   </v-app-bar>
 </template>
 
 <script setup lang="ts">
-import imgSrc from '@/assets/logo.svg'
 import { ref } from 'vue'
-import { useLocale, useTheme } from 'vuetify'
+import { useLocale } from 'vuetify'
 import { preferencesStore } from '@/stores/preferences.ts'
+import { useAnalysisStore } from '@/stores/analysis'
 import { onMounted } from 'vue'
 import CountryFlag from 'vue-country-flag-next'
 import { countries_infos } from '@/../i18n/index.js'
 
-const theme = useTheme()
 const { current } = useLocale()
 const prefStore = preferencesStore()
 const showLang = ref(false)
+const analysisStore = useAnalysisStore()
 
 onMounted(() => {
-  theme.change(prefStore.isDark ? 'customDarkTheme' : 'customLightTheme')
   setLang(prefStore.lang)
 })
 

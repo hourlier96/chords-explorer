@@ -24,7 +24,7 @@
 
         <PianoKeyboard
           v-if="currentlyEditingChord"
-          :active-notes="selectedChordNotes"
+          :active-notes="pianoDisplayNotes"
           class="mt-1"
           @add-note="(note) => recalculateChord(note, currentlyEditingChord, false)"
           @remove-note="(note) => recalculateChord(note, currentlyEditingChord, true)"
@@ -52,6 +52,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, watch, nextTick } from 'vue'
+import { storeToRefs } from 'pinia'
 import { ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS_NORMALIZED, NOTES_FLAT } from '@/constants'
 import { useAnalysisStore } from '@/stores/analysis.js'
 import { piano, getNotesForChord, noteToMidi } from '@/sampler.js'
@@ -61,95 +62,7 @@ import ChordEditor from '@/components/progression/ChordEditor.vue'
 import AnalysisGrid from '@/components/analysis/AnalysisGrid.vue'
 
 const analysisStore = useAnalysisStore()
-
-const defaultProgression = [
-  {
-    id: 1,
-    root: 'A',
-    quality: 'm7',
-    inversion: 0,
-    duration: 2,
-    notes: ['A2', 'C4', 'E4', 'G4']
-  },
-  {
-    id: 2,
-    root: 'G',
-    quality: '',
-    inversion: 1,
-    duration: 2,
-    notes: ['B2', 'D4', 'G4']
-  },
-  {
-    id: 3,
-    root: 'C',
-    quality: '',
-    inversion: 0,
-    duration: 2,
-    notes: ['C3', 'G3', 'E4', 'G4']
-  },
-  {
-    id: 4,
-    root: 'F',
-    quality: 'maj7',
-    inversion: 0,
-    duration: 2,
-    notes: ['F2', 'A3', 'C4', 'E4']
-  },
-  {
-    id: 5,
-    root: 'D',
-    quality: 'm7',
-    inversion: 0,
-    duration: 2,
-    notes: ['D2', 'F3', 'A3', 'C4']
-  },
-  {
-    id: 6,
-    root: 'E',
-    quality: 'sus4',
-    inversion: 0,
-    duration: 1,
-    notes: ['E2', 'A3', 'B3']
-  },
-  {
-    id: 7,
-    root: 'E',
-    quality: '7',
-    inversion: 0,
-    duration: 1,
-    notes: ['G#2', 'G#3', 'B3', 'D4']
-  },
-  {
-    id: 9,
-    root: 'A',
-    quality: '9',
-    inversion: 0,
-    duration: 2,
-    notes: ['A2', 'G3', 'B3', 'C#4', 'E4']
-  },
-  {
-    id: 10,
-    root: 'D',
-    quality: '7',
-    inversion: 0,
-    duration: 2,
-    notes: ['D2', 'D4', 'F#4', 'A4', 'C4']
-  },
-  {
-    id: 11,
-    root: 'G',
-    quality: '',
-    inversion: 0,
-    duration: 4,
-    notes: ['G2', 'B3', 'D4', 'G4']
-  }
-]
-
-const progression = ref(
-  analysisStore.lastAnalysis.progression && analysisStore.lastAnalysis.progression.length > 0
-    ? JSON.parse(JSON.stringify(analysisStore.lastAnalysis.progression))
-    : defaultProgression
-)
+const { activeProgression: progression, liveMidiNotes } = storeToRefs(analysisStore)
 
 const isLoading = ref(false)
 const analysisError = ref(null)
@@ -164,6 +77,14 @@ const noMatch = ref(false)
 const analysisResults = computed(() => analysisStore.lastAnalysis.result)
 
 const lastChordPlayedFromAnalyze = ref(false)
+
+const pianoDisplayNotes = computed(() => {
+  // Si le MIDI est actif et qu'au moins une note est jouée, on affiche les notes MIDI
+  if (analysisStore.isMidiEnabled && liveMidiNotes.value.length > 0) {
+    return liveMidiNotes.value
+  }
+  return selectedChordNotes.value
+})
 
 function launchEdition(chord, fromAnalyze = false) {
   lastChordPlayedFromAnalyze.value = fromAnalyze

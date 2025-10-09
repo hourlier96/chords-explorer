@@ -302,3 +302,86 @@ export const CHORD_FORMULAS_NORMALIZED = {
   split3: [0, 3, 4, 7],
   mu: [0, 4, 2] // 14 % 12 = 2
 }
+
+export const defaultProgression = [
+  {
+    id: 1,
+    root: 'A',
+    quality: 'm7',
+    inversion: 0,
+    duration: 2,
+    notes: ['A2', 'C4', 'E4', 'G4']
+  },
+  {
+    id: 2,
+    root: 'G',
+    quality: '',
+    inversion: 1,
+    duration: 2,
+    notes: ['B2', 'D4', 'G4']
+  },
+  {
+    id: 3,
+    root: 'C',
+    quality: '',
+    inversion: 0,
+    duration: 2,
+    notes: ['C3', 'G3', 'E4', 'G4']
+  },
+  {
+    id: 4,
+    root: 'F',
+    quality: 'maj7',
+    inversion: 0,
+    duration: 2,
+    notes: ['F2', 'A3', 'C4', 'E4']
+  },
+  {
+    id: 5,
+    root: 'D',
+    quality: 'm7',
+    inversion: 0,
+    duration: 2,
+    notes: ['D2', 'F3', 'A3', 'C4']
+  },
+  {
+    id: 6,
+    root: 'E',
+    quality: 'sus4',
+    inversion: 0,
+    duration: 1,
+    notes: ['E2', 'A3', 'B3']
+  },
+  {
+    id: 7,
+    root: 'E',
+    quality: '7',
+    inversion: 0,
+    duration: 1,
+    notes: ['G#2', 'G#3', 'B3', 'D4']
+  },
+  {
+    id: 9,
+    root: 'A',
+    quality: '9',
+    inversion: 0,
+    duration: 2,
+    notes: ['A2', 'G3', 'B3', 'C#4', 'E4']
+  },
+  {
+    id: 10,
+    root: 'D',
+    quality: '7',
+    inversion: 0,
+    duration: 2,
+    notes: ['D2', 'D4', 'F#4', 'A4', 'C4']
+  },
+  {
+    id: 11,
+    root: 'G',
+    quality: '',
+    inversion: 0,
+    duration: 4,
+    notes: ['G2', 'B3', 'D4', 'G4']
+  }
+]
