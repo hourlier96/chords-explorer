@@ -72,7 +72,6 @@ ROMAN_TO_DEGREE_MAP = {
 }
 
 CORE_QUALITIES = {
-    # --- Majeurs ---
     "": "major",
     "M": "major",
     "maj": "major",
@@ -87,19 +86,22 @@ CORE_QUALITIES = {
     "Δ": "major",
     "M9": "major",
     "maj9": "major",
+    "maj9(no5)": "major",
     "maj11": "major",
     "maj13": "major",
-    "M7#5": "major",
     "maj7#5": "major",
+    "M7#5": "major",
     "maj7b5": "major",
+    "maj7#11": "major",
     "mu": "major",
-    # --- Mineurs ---
     "m": "minor",
     "min": "minor",
     "-": "minor",
     "m6": "minor",
     "-6": "minor",
     "m(add9)": "minor",
+    "m(add9)(no5)": "minor",
+    "m(add11)(no5)": "minor",
     "m(6/9)": "minor",
     "m7": "minor",
     "min7": "minor",
@@ -112,12 +114,12 @@ CORE_QUALITIES = {
     "-13": "minor",
     "m(maj7)": "minor",
     "mM7": "minor",
-    # --- Dominantes ---
     "7": "dominant",
     "9": "dominant",
     "11": "dominant",
     "11(no3)": "dominant",
     "13": "dominant",
+    "13#11": "dominant",
     "aug7": "dominant",
     "+7": "dominant",
     "7b5": "dominant",
@@ -129,7 +131,7 @@ CORE_QUALITIES = {
     "9b5": "dominant",
     "9#5": "dominant",
     "alt7": "dominant",
-    # (Conservés de votre liste originale pour être exhaustif)
+    "7alt": "dominant",
     "7b9b5": "dominant",
     "7b9#5": "dominant",
     "7#9b5": "dominant",
@@ -139,24 +141,21 @@ CORE_QUALITIES = {
     "7#9#11": "dominant",
     "7b9b13": "dominant",
     "7#9b13": "dominant",
-    # --- Diminués ---
     "dim": "diminished",
     "d": "diminished",
     "°": "diminished",
     "dim7": "diminished",
     "°7": "diminished",
-    "m7b5": "diminished",  # Demi-diminué
-    "ø": "diminished",  # Demi-diminué
-    # --- Augmentés ---
+    "m7b5": "diminished",
+    "ø": "diminished",
     "aug": "augmented",
     "+": "augmented",
-    # --- Suspendus ---
     "sus2": "suspended",
     "sus4": "suspended",
     "7sus2": "suspended",
     "7sus4": "suspended",
     "9sus4": "suspended",
-    # --- Autres ---
+    "13sus4": "suspended",
     "5": "power",
     "quartal": "other",
     "split3": "other",

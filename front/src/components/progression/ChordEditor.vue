@@ -52,17 +52,17 @@
           </div>
           <div class="inversion-control-footer">
             <div
-              @click="!isLegacyInversionDisabled && changeInversion(-1)"
+              @click="!props.disabled && changeInversion(-1)"
               class="inversion-badge"
-              :class="{ disabled: isLegacyInversionDisabled }"
+              :class="{ disabled: props.disabled }"
             >
               -
             </div>
             <span v-if="chord?.notes === undefined">Position {{ chord.inversion + 1 }}</span>
             <div
-              @click="!isLegacyInversionDisabled && changeInversion(1)"
+              @click="!props.disabled && changeInversion(1)"
               class="inversion-badge"
-              :class="{ disabled: isLegacyInversionDisabled }"
+              :class="{ disabled: props.disabled }"
             >
               +
             </div>

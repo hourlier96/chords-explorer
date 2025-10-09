@@ -6,7 +6,7 @@
         <span class="found-numeral" :class="getChordClass(item)">
           {{ item.found_numeral ? item.found_numeral : ' ' }}
         </span>
-        <v-tooltip v-if="borrowedInfo && !isSubstitution" location="right" max-width="300px">
+        <v-tooltip v-if="borrowedInfo" location="right" max-width="300px">
           <template #activator="{ props: tooltipProps }">
             <v-icon
               v-bind="tooltipProps"
@@ -36,7 +36,6 @@ const props = defineProps({
   item: { type: Object, required: true },
   analysis: { type: Object, required: true },
   piano: { type: Object, required: true },
-  isSubstitution: { type: Boolean, default: false },
   beatWidth: { type: Number, required: true }
 })
 
@@ -54,8 +53,7 @@ function getChordClass(item) {
   const isForeign = !item.is_diatonic && !borrowedInfo.value
   return {
     borrowed_chord: isBorrowed,
-    foreign_chord: isForeign,
-    substitution_chord: props.isSubstitution
+    foreign_chord: isForeign
   }
 }
 
