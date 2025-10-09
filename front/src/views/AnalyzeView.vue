@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="7">
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" class="pl-0">
             <ChordProgressionBuilder
               v-model="progression"
               :is-loading="isLoading"
@@ -20,7 +20,7 @@
         </v-row>
       </v-col>
       <v-col cols="5">
-        <ChordEditor v-model="currentlyEditingChord" />
+        <ChordEditor v-model="currentlyEditingChord" :disabled="lastChordPlayedFromAnalyze" />
 
         <PianoKeyboard
           v-if="currentlyEditingChord"
@@ -28,8 +28,9 @@
           class="mt-1"
           @add-note="(note) => recalculateChord(note, currentlyEditingChord, false)"
           @remove-note="(note) => recalculateChord(note, currentlyEditingChord, true)"
+          :disabled="lastChordPlayedFromAnalyze"
         />
-        <div class="text-center font-italic">
+        <div v-if="!lastChordPlayedFromAnalyze" class="text-center font-italic">
           {{ noMatch ? 'Aucune correspondance trouvée' : '' }}
           {{
             !noMatch && currentlyEditingChord && !currentlyEditingChord?.notes
@@ -44,7 +45,7 @@
         :title="`${analysisResults.tonic} ${analysisResults.mode}`"
         :progression-items="analysisResults.quality_analysis"
         :analysis="analysisStore.lastAnalysis"
-        :piano="piano"
+        @play-chord="(chord) => launchEdition(chord, true)"
       />
     </v-row>
   </v-container>
@@ -162,7 +163,10 @@ const noMatch = ref(false)
 
 const analysisResults = computed(() => analysisStore.lastAnalysis.result)
 
-function launchEdition(chord) {
+const lastChordPlayedFromAnalyze = ref(false)
+
+function launchEdition(chord, fromAnalyze = false) {
+  lastChordPlayedFromAnalyze.value = fromAnalyze
   editingChordId.value = chord.id
   selectedChordNotes.value = getNotesForChord(chord)
   noMatch.value = false
@@ -302,7 +306,6 @@ function recalculateChord(noteClicked, currentChord, remove = false) {
     if (foundMatchData) break
   }
 
-  // Mettre à jour l'accord
   if (foundMatchData) {
     noMatch.value = false
     currentlyEditingChord.value = {

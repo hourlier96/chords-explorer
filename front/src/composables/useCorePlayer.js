@@ -18,30 +18,39 @@ export function useCorePlayer({
   const isPlaying = ref(false)
   const currentlyPlayingIndex = ref(-1)
 
-  const stopFlag = ref(false)
+  // On garde une référence au contrôleur d'annulation
+  let abortController = null
 
   const stop = () => {
     if (!isPlaying.value) return
-    stopFlag.value = true
+    // On signale l'annulation. Ceci va déclencher l'événement 'abort' sur le signal.
+    abortController?.abort()
   }
 
-  /**
-   * La fonction play accepte maintenant des options pour démarrer à un endroit précis.
-   */
   const play = async (options = {}) => {
     if (isPlaying.value) return
     if (Tone.getContext().state !== 'running') {
       await Tone.start()
     }
 
-    let currentOptions = { ...options }
-    stopFlag.value = false
+    // Création d'un nouveau contrôleur pour cette session de lecture
+    abortController = new AbortController()
+
+    // On utilise le signal pour savoir quand arrêter la boucle principale
+    abortController.signal.addEventListener('abort', () => {
+      isPlaying.value = false
+      currentlyPlayingIndex.value = -1
+      if (onStop) {
+        onStop()
+      }
+    })
+
     isPlaying.value = true
+    let currentOptions = { ...options }
 
     try {
       do {
         const { startIndex = 0, startOffsetBeats = 0 } = currentOptions
-
         const beatsBefore = progression.value
           .slice(0, startIndex)
           .reduce((sum, chord) => sum + chord.duration, 0)
@@ -54,51 +63,53 @@ export function useCorePlayer({
         let globalBeatCounter = absoluteStartBeat
 
         for (let i = startIndex; i < progression.value.length; i++) {
-          if (stopFlag.value) break
+          // La boucle s'arrête si le signal a été "aborted"
+          if (abortController.signal.aborted) break
 
           const item = progression.value[i]
           if (!item || !item.duration) continue
 
           currentlyPlayingIndex.value = i
-
           const isFirstItemInLoop = i === startIndex
           const currentOffset = isFirstItemInLoop ? startOffsetBeats : 0
 
-          if (isMetronomeActive.value && !stopFlag.value) {
+          if (isMetronomeActive.value && !abortController.signal.aborted) {
             const beatDurationSec = tempoStore.beatDurationMs / 1000
             for (
               let localBeat = Math.floor(currentOffset);
               localBeat < item.duration;
               localBeat++
             ) {
-              if (stopFlag.value) break
+              if (abortController.signal.aborted) break
               const time = Tone.now() + (localBeat - currentOffset) * beatDurationSec
               metronome.click(Math.floor(globalBeatCounter), beatsPerMeasure.value, time)
               globalBeatCounter++
             }
           }
 
-          if (!stopFlag.value) {
+          if (!abortController.signal.aborted) {
             await onPlayItemAsync({
               item,
               index: i,
-              startOffsetBeats: currentOffset
+              startOffsetBeats: currentOffset,
+              signal: abortController.signal
             })
           }
         }
 
-        if (isLooping.value && !stopFlag.value) {
+        if (isLooping.value && !abortController.signal.aborted) {
           currentOptions = { startIndex: 0, startOffsetBeats: 0 }
         }
-      } while (isLooping.value && !stopFlag.value)
+      } while (isLooping.value && !abortController.signal.aborted)
     } catch (error) {
-      console.error('Erreur durant la lecture :', error)
+      if (error.name !== 'AbortError') {
+        console.error('Erreur durant la lecture :', error)
+      }
     } finally {
-      // Nettoyage final
-      isPlaying.value = false
-      currentlyPlayingIndex.value = -1
-      if (onStop) {
-        onStop()
+      if (!abortController.signal.aborted) {
+        isPlaying.value = false
+        currentlyPlayingIndex.value = -1
+        if (onStop) onStop()
       }
     }
   }

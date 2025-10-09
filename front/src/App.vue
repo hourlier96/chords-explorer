@@ -22,6 +22,6 @@ function adaptMargin(event) {
 
 <style scoped>
 #main-container {
-  padding: var(--navigation-bar-height) 0px var(--navigation-bar-height) 0px;
+  padding: var(--navigation-bar-height) 0px 0px 0px;
 }
 </style>

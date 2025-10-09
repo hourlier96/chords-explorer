@@ -85,17 +85,17 @@ import TimelineGrid from '@/components/common/TimelineGrid.vue'
 import PlayerControls from '@/components/common/PlayerControls.vue'
 
 const props = defineProps({
-  // 'items' est le tableau d'éléments à afficher (accords, analyses...)
   items: { type: Array, required: true },
-  // 'playCallback' est la fonction spécifique pour jouer un item
   playCallback: { type: Function, required: true },
-  // 'draggable' active ou désactive le glisser-déposer
   draggable: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['drag-end', 'item-click', 'grid-click'])
 
 const gridContainerRef = ref(null)
+defineExpose({
+  gridContainerRef
+})
 
 // Calcule les positions de départ pour chaque élément
 const itemsWithPositions = computed(() => {

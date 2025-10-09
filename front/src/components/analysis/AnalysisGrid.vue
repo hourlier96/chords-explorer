@@ -2,33 +2,11 @@
   <div class="detailed-analysis-container">
     <ProgressionTimeline
       :items="displayedProgression"
-      :play-callback="handlePlayItemAnalysis"
+      :play-callback="playAnalysisChordItem"
       :draggable="false"
     >
       <template #header>
         <div class="substitution-header">
-          <div v-if="!isSubstitution" class="mode-selector-wrapper with-icon">
-            <v-menu location="bottom">
-              <template #activator="{ props }">
-                <div class="mode-selector" v-bind="props">
-                  <span>{{ globalModeLabel }}</span>
-                  <v-icon icon="mdi-chevron-down" class="selector-icon"></v-icon>
-                </div>
-              </template>
-              <v-list dense class="mode-selection-list">
-                <v-list-item @click="selectedMode = null" class="list-item-reset">
-                  <v-list-item-title>Progression d'origine</v-list-item-title>
-                </v-list-item>
-                <v-list-item
-                  v-for="mode in availableModes"
-                  :key="mode"
-                  @click="selectedMode = mode"
-                >
-                  <v-list-item-title>{{ mode }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
           <div v-if="!isSubstitution" class="legend">
             <div class="legend-item">
               <div class="legend-dot" style="background-color: #2ecc71"></div>
@@ -61,27 +39,9 @@
             :style="{ gridColumn: `${segment.start} / span ${segment.duration}` }"
             :class="{ 'has-local-override': segment.hasLocalOverride }"
           >
-            <v-menu activator="parent" location="bottom">
-              <v-list dense class="mode-selection-list">
-                <v-list-item @click="updateSegmentMode(segment.key, null)" class="list-item-reset">
-                  <v-list-item-title>Mode d'origine</v-list-item-title>
-                </v-list-item>
-                <v-list-item
-                  v-for="mode in availableModes"
-                  :key="mode"
-                  @click="updateSegmentMode(segment.key, mode)"
-                >
-                  <v-list-item-title>{{ mode }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-
             <v-tooltip location="top" :text="segment.explanation">
               <template #activator="{ props }">
-                <span v-bind="props" class="segment-label"
-                  >{{ segment.label }}
-                  <v-icon icon="mdi-chevron-down" size="x-small" class="segment-icon"></v-icon
-                ></span>
+                <span v-bind="props" class="segment-label">{{ segment.label }}</span>
               </template>
             </v-tooltip>
           </div>
@@ -105,8 +65,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
-import { BEAT_WIDTH, useStatePlayer } from '@/composables/useStatePlayer.js'
+import { BEAT_WIDTH } from '@/composables/useStatePlayer.js'
 import { sleep } from '@/utils.js'
+import { piano } from '@/sampler.js'
 import { useTempoStore } from '@/stores/tempo.js'
 import ProgressionTimeline from '@/components/common/ProgressionTimeline.vue'
 import AnalysisCard from '@/components/analysis/AnalysisCard.vue'
@@ -115,15 +76,12 @@ const props = defineProps({
   title: { type: String, required: true },
   progressionItems: { type: Array, required: true },
   analysis: { type: Object, required: true },
-  piano: { type: Object, required: true },
   isSubstitution: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['update:progressionItems'])
+const emit = defineEmits(['update:progressionItems', 'play-chord'])
 
 const tempoStore = useTempoStore()
-const selectedMode = ref(null)
-const segmentModes = ref({})
 const progressionState = ref([])
 
 const totalBeatsForCss = computed(() => {
@@ -142,31 +100,9 @@ watch(
   { immediate: true, deep: true }
 )
 
-const globalModeLabel = computed(() => {
-  return selectedMode.value || "Progression d'origine"
-})
-
-const availableModes = computed(() => Object.keys(props.analysis.result.harmonized_chords))
-
 const displayedProgression = computed(() => {
   const baseProgression = progressionState.value.map((item, index) => {
     if (!item.segment_context) return item
-
-    const segmentKey = item.segment_context.explanation
-
-    const substitutionMode = segmentModes.value[segmentKey] || selectedMode.value
-
-    if (substitutionMode) {
-      const newModeChords = props.analysis.result.harmonized_chords[substitutionMode]
-      const newChordData = newModeChords ? newModeChords[index] : null
-
-      if (newChordData) {
-        return {
-          ...item,
-          ...newChordData
-        }
-      }
-    }
     return item
   })
 
@@ -194,19 +130,12 @@ const harmonicSegments = computed(() => {
     } else {
       if (currentSegment) segments.push(currentSegment)
 
-      const localMode = segmentModes.value[segmentKey]
-      const globalMode = selectedMode.value
-      const originalMode = item.segment_context.mode
-
-      const modeForLabel = localMode || globalMode || originalMode
-
       currentSegment = {
         key: segmentKey,
         start: item.start,
         duration: item.duration,
-        label: `${item.segment_context.tonic} ${modeForLabel}`,
-        explanation: item.segment_context.explanation,
-        hasLocalOverride: !!localMode
+        label: `${item.segment_context.tonic} ${item.segment_context.mode}`,
+        explanation: item.segment_context.explanation
       }
     }
   })
@@ -215,14 +144,6 @@ const harmonicSegments = computed(() => {
   }
   return segments
 })
-
-function updateSegmentMode(segmentKey, mode) {
-  if (mode) {
-    segmentModes.value[segmentKey] = mode
-  } else {
-    delete segmentModes.value[segmentKey]
-  }
-}
 
 function updateProgressionItem(index, newItem) {
   const newProgression = [...progressionState.value]
@@ -233,11 +154,20 @@ function updateProgressionItem(index, newItem) {
   emit('update:progressionItems', newProgression)
 }
 
-const handlePlayItemAnalysis = async ({ item }) => {
+const playAnalysisChordItem = async ({ item }) => {
   if (!item.chord) return
-  let chordDurationMs = item.duration * tempoStore.beatDurationMs
-  if (item && chordDurationMs > 0) {
-    props.piano.play(item)
+  const chordToPlay = {
+    id: item.id,
+    notes: item.notes,
+    root: item.expected_chord_name.match(/^[A-G][#b]?/)?.[0],
+    quality: item.found_quality,
+    inversion: item.inversion,
+    duration: item.duration
+  }
+  if (chordToPlay.duration > 0) {
+    const chordDurationMs = chordToPlay.duration * tempoStore.beatDurationMs
+    emit('play-chord', chordToPlay)
+    piano.play(chordToPlay)
     await sleep(chordDurationMs)
   }
 }
@@ -245,6 +175,7 @@ const handlePlayItemAnalysis = async ({ item }) => {
 
 <style scoped>
 .detailed-analysis-container {
+  width: 100%;
   background-color: #2f2f2f;
   border-radius: 8px;
   padding: 1rem;
@@ -309,7 +240,7 @@ const handlePlayItemAnalysis = async ({ item }) => {
   grid-template-columns: repeat(var(--total-beats, 8), var(--beat-width));
   grid-auto-rows: minmax(28px, auto);
   align-items: stretch;
-  margin-bottom: 8px; /* Espace entre les segments et les accords */
+  margin-bottom: 8px;
   padding: 0;
 }
 

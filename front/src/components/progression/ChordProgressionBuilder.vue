@@ -1,6 +1,7 @@
 <template>
   <div class="builder-container">
     <ProgressionTimeline
+      ref="gridContainerRef"
       :items="progression"
       :play-callback="playChordItem"
       draggable
@@ -113,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 
 import { BEAT_WIDTH } from '@/composables/useStatePlayer.js'
 import { piano, getNotesAsMidi } from '@/sampler.js'
@@ -152,16 +153,12 @@ const selectedChordIds = ref(new Set())
 const clipboard = ref([])
 const undoStack = ref([])
 
-const playChordItem = async ({ item, startOffsetBeats = 0 }) => {
+const playChordItem = async ({ item }) => {
   if (!item) return
+  const chordDurationMs = item.duration * tempoStore.beatDurationMs
   emit('play-chord', item)
   piano.play(item)
-  const remainingDurationInBeats = item.duration - startOffsetBeats
-  const chordDurationMs = remainingDurationInBeats * tempoStore.beatDurationMs
-
-  if (chordDurationMs > 0) {
-    await sleep(chordDurationMs)
-  }
+  await sleep(chordDurationMs)
 }
 
 const progression = computed({
@@ -192,10 +189,17 @@ function addChord() {
     id: Date.now(),
     root: 'C',
     quality: '',
-    inversion: 0,
+    inversion: 2,
     duration: 2
   }
   progression.value = [...progression.value, newChord]
+  // Place scroll at the end to show the new chord
+  nextTick(() => {
+    if (gridContainerRef.value && gridContainerRef.value.gridContainerRef) {
+      const scrollableDiv = gridContainerRef.value.gridContainerRef
+      scrollableDiv.scrollLeft = scrollableDiv.scrollWidth
+    }
+  })
 }
 
 function removeChord(chordId) {
@@ -354,16 +358,6 @@ function cancelQuickImport() {
   quickImportText.value = ''
 }
 
-function findClosestChordStartBeat(beat) {
-  const targetChord = progression.value.find(
-    (chord) => beat + 1 >= chord.start && beat + 1 < chord.start + chord.duration
-  )
-  if (targetChord) {
-    return targetChord.start - 1
-  }
-  return beat
-}
-
 // --- Copy/Paste Logic ---
 
 /**
@@ -502,7 +496,6 @@ onUnmounted(() => {
   align-items: center;
   gap: 10px;
 
-  background-color: rgba(40, 40, 40, 0.75);
   padding: 19px 0 0 0;
 }
 
@@ -563,7 +556,6 @@ onUnmounted(() => {
 
 .analyze-section-container {
   margin-top: 1rem;
-  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
 }

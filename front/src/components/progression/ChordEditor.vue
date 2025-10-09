@@ -5,67 +5,67 @@
         <div class="root-note-selector">
           <template v-for="note in NOTES" :key="note">
             <div v-if="note.includes(' / ')" class="enharmonic-pair">
-              <button
+              <div
                 v-for="enharmonicNote in note.split(' / ')"
                 :key="enharmonicNote"
-                @click="updateChord('root', enharmonicNote)"
-                :class="{ active: isNoteActive(enharmonicNote) }"
-                class="note-button"
+                @click="!props.disabled && updateChord('root', enharmonicNote)"
+                :class="{ active: isNoteActive(enharmonicNote), disabled: props.disabled }"
+                class="note-badge"
               >
                 {{ enharmonicNote }}
-              </button>
+              </div>
             </div>
-            <button
+            <div
               v-else
-              @click="updateChord('root', note)"
-              :class="{ active: isNoteActive(note) }"
-              class="note-button"
+              @click="!props.disabled && updateChord('root', note)"
+              :class="{ active: isNoteActive(note), disabled: props.disabled }"
+              class="note-badge"
             >
               {{ note }}
-            </button>
+            </div>
           </template>
         </div>
         <div class="main-content">
           <div class="quality-selector">
             <div class="category-tabs">
-              <button
+              <div
                 v-for="group in QUALITIES"
                 :key="group.label"
-                @click="activeQualityCategory = group.label"
-                :class="{ active: activeQualityCategory === group.label }"
-                class="category-tab"
+                @click="!props.disabled && (activeQualityCategory = group.label)"
+                :class="{ active: activeQualityCategory === group.label, disabled: props.disabled }"
+                class="category-badge"
               >
                 {{ group.label }}
-              </button>
+              </div>
             </div>
             <div class="options-grid">
-              <button
+              <div
                 v-for="option in activeQualityOptions"
                 :key="option.value"
-                @click="updateChord('quality', option.value)"
-                :class="{ active: chord.quality === option.value }"
-                class="option-button"
+                @click="!props.disabled && updateChord('quality', option.value)"
+                :class="{ active: chord.quality === option.value, disabled: props.disabled }"
+                class="option-badge"
               >
                 {{ option.text }}
-              </button>
+              </div>
             </div>
           </div>
           <div class="inversion-control-footer">
-            <v-btn
-              @click="changeInversion(-1)"
-              class="inversion-button"
-              :disabled="chord?.notes?.length > 0"
+            <div
+              @click="!isLegacyInversionDisabled && changeInversion(-1)"
+              class="inversion-badge"
+              :class="{ disabled: isLegacyInversionDisabled }"
             >
               -
-            </v-btn>
+            </div>
             <span v-if="chord?.notes === undefined">Position {{ chord.inversion + 1 }}</span>
-            <v-btn
-              @click="changeInversion(1)"
-              class="inversion-button"
-              :disabled="chord?.notes?.length > 0"
+            <div
+              @click="!isLegacyInversionDisabled && changeInversion(1)"
+              class="inversion-badge"
+              :class="{ disabled: isLegacyInversionDisabled }"
             >
               +
-            </v-btn>
+            </div>
           </div>
         </div>
       </div>
@@ -73,7 +73,6 @@
     <div v-else class="placeholder-text">Cliquez sur un accord pour l'éditer.</div>
   </v-card>
 </template>
-
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { QUALITIES, NOTES } from '@/constants.js'
@@ -82,7 +81,8 @@ import { ALL_PLAYABLE_NOTES } from '@/keyboard.js'
 import { ENHARMONIC_EQUIVALENTS } from '@/constants.js'
 
 const props = defineProps({
-  modelValue: { type: Object, default: null }
+  modelValue: { type: Object, default: null },
+  disabled: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -161,6 +161,7 @@ function changeInversion(direction) {
 </script>
 
 <style scoped>
+/* ... (styles existants inchangés) ... */
 .placeholder-text {
   text-align: center;
   color: #888;
@@ -180,26 +181,42 @@ function changeInversion(direction) {
   padding: 5px;
   flex-shrink: 0;
 }
-.note-button {
-  background: none;
-  border: none;
-  color: #a9a9b0;
-  padding: 2px 5px;
+
+/* Les .note-button deviennent .note-badge */
+.note-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  text-align: center;
-  font-size: 1rem;
-  border-radius: 6px;
+  user-select: none;
+  background-color: transparent;
+  color: #ccc;
+  font-size: 0.9rem;
+  min-width: 60px;
+  padding: 4px 12px;
+  margin: 2px 0;
+  border-radius: 4px;
   transition:
-    background-color 0.2s,
-    color 0.2s;
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
-.note-button:hover {
-  background-color: #3a3a3c;
+
+.note-badge:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
-.note-button.active {
-  background-color: #0a84ff;
+
+.note-badge.active {
+  background-color: #007bff;
   color: white;
   font-weight: bold;
+}
+
+.enharmonic-pair {
+  display: flex;
+}
+.enharmonic-pair .note-badge {
+  min-width: 30px;
+  flex-grow: 1;
 }
 
 .main-content {
@@ -216,30 +233,34 @@ function changeInversion(direction) {
   flex-direction: column;
   overflow: hidden;
 }
+
 .category-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 0;
-  padding-bottom: 8px;
+  gap: 6px;
+  padding-bottom: 12px;
 }
-.category-tabs button {
-  flex-shrink: 0;
-  padding: 0.25rem 0.75rem;
-  margin-right: 0.5rem;
-  border-radius: 1rem;
-  border: 1px solid transparent;
-  background-color: #5f5f5f;
-  color: #ddd;
-  font-size: 0.8rem;
-  transition: all 0.2s;
+
+/* Le sélecteur cible maintenant .category-badge */
+.category-badge {
+  padding: 3px 10px;
+  border-radius: 1rem; /* Forme "pilule" pour un look de badge */
+  border: 1px solid #555;
+  background-color: transparent;
+  color: #ccc;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
   cursor: pointer;
+  user-select: none;
 }
-.category-tabs button:hover {
-  background-color: #777;
+.category-badge:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #777;
 }
-.category-tabs button.active {
+.category-badge.active {
   background-color: #007bff;
   color: white;
+  border-color: #007bff;
   font-weight: bold;
 }
 
@@ -248,24 +269,29 @@ function changeInversion(direction) {
   grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
   gap: 0.5rem;
   overflow-y: auto;
-  padding: 0.25rem;
+  padding: 0.2rem;
 }
-.options-grid button {
+
+/* Le sélecteur cible maintenant .option-badge */
+.option-badge {
   width: 100%;
-  padding: 0.5rem 0.25rem;
-  border-radius: 4px;
-  border: 1px solid #5f5f5f;
-  background-color: #3c3c3c;
+  padding: 0.4rem 0.2rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #333;
   color: #ddd;
-  font-size: 0.9rem;
-  transition: all 0.2s;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
   cursor: pointer;
+  user-select: none;
+  text-align: center;
 }
-.options-grid button:hover {
+.option-badge:hover {
   border-color: #007bff;
   color: white;
+  background-color: #3a3a3a;
 }
-.options-grid button.active {
+.option-badge.active {
   background-color: #007bff;
   color: white;
   border-color: #007bff;
@@ -281,16 +307,31 @@ function changeInversion(direction) {
   border-top: 1px solid #444;
   background-color: #2c2c2e;
 }
-.inversion-button {
+
+/* Le sélecteur cible maintenant .inversion-badge */
+.inversion-badge {
   font-family: monospace;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   line-height: 1;
-  padding: 5px 15px;
-  border-radius: 8px;
+  padding: 6px 16px;
+  border-radius: 6px;
   border: 1px solid #5f5f5f;
-  background-color: #4a4a4a;
+  background-color: #444;
   color: white;
   cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+.inversion-badge:hover {
+  background-color: #555;
+  border-color: #777;
+}
+
+/* Nouvelle règle pour gérer l'état désactivé */
+.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+  pointer-events: none; /* Empêche tout événement de souris */
 }
 </style>

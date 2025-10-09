@@ -1,4 +1,3 @@
-// La structure des touches que vous aviez dans PianoKeyboard.vue
 export const whiteKeys = [
   // Octave 2
   { note: 'C2', blackKey: 'C#2' },
@@ -42,7 +41,6 @@ export const whiteKeys = [
   { note: 'B6' }
 ]
 
-// On génère un tableau de toutes les notes jouables sur ce clavier
 export const ALL_PLAYABLE_NOTES = whiteKeys.reduce((acc, key) => {
   acc.push(key.note)
   if (key.blackKey) {

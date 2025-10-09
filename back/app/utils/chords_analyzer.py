@@ -20,6 +20,7 @@ PARALLEL_MODES = {
 
 
 class QualityAnalysisItem(TypedDict):
+    id: NotRequired[float | str]  # For analyze editor tracking
     chord: str
     found_numeral: Optional[str]
     expected_numeral: Optional[str]

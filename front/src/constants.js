@@ -31,6 +31,7 @@ export const QUALITIES = [
       { value: 'add11', text: 'Add 11' },
       { value: 'maj7', text: 'Majeur 7 (Δ)' },
       { value: 'maj9', text: 'Majeur 9' },
+      { value: 'maj9(no5)', text: 'Majeur 9(no5)' },
       { value: 'maj11', text: 'Majeur 11' },
       { value: 'maj13', text: 'Majeur 13' },
       { value: 'maj7#5', text: 'Majeur 7♯5' },
@@ -44,6 +45,8 @@ export const QUALITIES = [
       { value: 'm6', text: 'Mineur 6' },
       { value: 'm(6/9)', text: 'Mineur 6/9' },
       { value: 'm(add9)', text: 'm(add9)' },
+      { value: 'm(add9)(no5)', text: 'm(add9)(no5)' },
+      { value: 'm(add11)(no5)', text: 'm(add11)(no5)' },
       { value: 'm7', text: 'Mineur 7' },
       { value: 'm9', text: 'Mineur 9' },
       { value: 'm11', text: 'Mineur 11' },
@@ -141,6 +144,8 @@ export const CHORD_FORMULAS = {
   add9: [0, 4, 7, 14],
   add11: [0, 4, 7, 17],
   'm(add9)': [0, 3, 7, 14],
+  'm(add9)(no5)': [0, 3, 14],
+  'm(add11)(no5)': [0, 3, 17],
 
   // --- Accords de Sixte ---
   6: [0, 4, 7, 9],
@@ -189,6 +194,7 @@ export const CHORD_FORMULAS = {
   // --- Accords étendus ---
   9: [0, 4, 7, 10, 14],
   maj9: [0, 4, 7, 11, 14],
+  'maj9(no5)': [0, 4, 11, 14],
   M9: [0, 4, 7, 11, 14],
   m9: [0, 3, 7, 10, 14],
   '-9': [0, 3, 7, 10, 14],
@@ -252,6 +258,8 @@ export const CHORD_FORMULAS_NORMALIZED = {
   add9: [0, 4, 7, 2], // 14 % 12 = 2
   add2: [0, 4, 7, 2], // 14 % 12 = 2
   'm(add9)': [0, 3, 7, 2], // 14 % 12 = 2
+  'm(add9)(no5)': [0, 3, 2], // 14 % 12 = 2
+  'm(add11)(no5)': [0, 3, 5], // 17 % 12 = 5
   add11: [0, 4, 7, 5], // 17 % 12 = 5
   add4: [0, 4, 7, 5], // 17 % 12 = 5
   '6/9': [0, 4, 7, 9, 2], // 14 % 12 = 2
@@ -262,6 +270,7 @@ export const CHORD_FORMULAS_NORMALIZED = {
 
   9: [0, 4, 7, 10, 2], // 14 % 12 = 2
   maj9: [0, 4, 7, 11, 2], // 14 % 12 = 2
+  'maj9(no5)': [0, 4, 11, 2], // 14 % 12 = 2
   M9: [0, 4, 7, 11, 2], // 14 % 12 = 2
   m9: [0, 3, 7, 10, 2], // 14 % 12 = 2
   '-9': [0, 3, 7, 10, 2], // 14 % 12 = 2

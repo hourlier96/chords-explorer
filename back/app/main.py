@@ -98,6 +98,7 @@ def get_all_substitutions(request: ProgressionRequest):
 
         # Ajout des propriétés originales aux résultats d'analyse
         for i, analyzed_chord in enumerate(quality_analysis):
+            analyzed_chord["id"] = progression_data[i].id
             analyzed_chord["inversion"] = progression_data[i].inversion
             analyzed_chord["duration"] = progression_data[i].duration
             if getattr(progression_data[i], "notes", None):

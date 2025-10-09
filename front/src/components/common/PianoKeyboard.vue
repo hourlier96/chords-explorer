@@ -2,12 +2,17 @@
   <div class="piano-container" ref="pianoContainer">
     <div class="piano-keyboard">
       <div v-for="key in whiteKeys" :key="key.note" class="white-key-wrapper">
-        <div :class="getNoteClasses(key.note, 'white')" @click="clickNote(key.note)"></div>
-        <div
+        <button
+          :class="getNoteClasses(key.note, 'white')"
+          @click="clickNote(key.note)"
+          :disabled="props.disabled"
+        ></button>
+        <button
           v-if="key.blackKey"
           :class="getNoteClasses(key.blackKey, 'black')"
           @click.stop="clickNote(key.blackKey)"
-        ></div>
+          :disabled="props.disabled"
+        ></button>
       </div>
     </div>
   </div>
@@ -24,6 +29,10 @@ const props = defineProps({
   activeNotes: {
     type: Array,
     default: () => []
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
