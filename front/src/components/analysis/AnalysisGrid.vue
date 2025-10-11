@@ -14,7 +14,7 @@
             </div>
             <div class="legend-item">
               <div class="legend-dot" style="background-color: #f1c40f"></div>
-              <span>Emprunts</span>
+              <span>Emprunts modaux</span>
             </div>
             <div class="legend-item">
               <div class="legend-dot" style="background-color: red"></div>

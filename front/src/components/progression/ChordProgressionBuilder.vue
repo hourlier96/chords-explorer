@@ -136,7 +136,7 @@
 
 <script setup>
 import { storeToRefs } from 'pinia'
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 
 import { BEAT_WIDTH } from '@/composables/useStatePlayer.ts'
 import { piano, getNotesAsMidi } from '@/utils/sampler.js'
@@ -206,8 +206,8 @@ function onDragEnd(event) {
   progression.value = newProgression
 }
 
-function addChord() {
-  const newChord = {
+function addChord(chord = null) {
+  const newChord = chord || {
     id: Date.now(),
     root: 'C',
     quality: '',
@@ -237,6 +237,16 @@ function updateChord(index, newChord) {
   newProgression[index] = newChord
   progression.value = newProgression
 }
+
+watch(
+  // Use a getter function to watch a reactive property from a store
+  () => midiStore.detectedChord,
+  (newChord) => {
+    if (newChord && analysisStore.autoAddWithMidi) {
+      addChord(newChord)
+    }
+  }
+)
 
 function startEditing(chord) {
   emit('start-editing', chord)

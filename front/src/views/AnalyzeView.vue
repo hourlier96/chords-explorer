@@ -5,8 +5,8 @@
         <v-row>
           <v-col cols="12" class="pl-0">
             <ChordProgressionBuilder
-              :model-value="progression"
-              @update:model-value="progression = $event"
+              :model-value="localProgression"
+              @update:model-value="localProgression = $event"
               :is-loading="isLoading"
               :error="analysisError"
               v-model:ai-model="selectedAiModel"
@@ -65,6 +65,15 @@ import AnalysisGrid from '@/components/analysis/AnalysisGrid.vue'
 const { analysis: analysisStore } = useStores()
 const { activeProgression: progression, liveMidiNotes } = storeToRefs(analysisStore)
 
+const localProgression = ref(JSON.parse(JSON.stringify(progression.value)))
+watch(
+  progression,
+  (newProgressionFromStore) => {
+    localProgression.value = JSON.parse(JSON.stringify(newProgressionFromStore))
+  },
+  { deep: true }
+)
+
 const isLoading = ref(false)
 const analysisError = ref(null)
 const editingChordId = ref(null)
@@ -100,7 +109,7 @@ async function analyzeProgression() {
   analysisError.value = null
   analysisStore.clearResult()
 
-  const chordsData = progression.value
+  const chordsData = localProgression.value
   if (chordsData.length < 2) {
     analysisError.value = "Veuillez construire une progression d'au moins 2 accords."
     isLoading.value = false
@@ -117,8 +126,10 @@ async function analyzeProgression() {
     const data = await response.json()
     if (data.error) throw new Error(data.error)
 
-    const progressionSnapshot = JSON.parse(JSON.stringify(progression.value))
+    const progressionSnapshot = JSON.parse(JSON.stringify(localProgression.value))
     analysisStore.setLastAnalysis(data, progressionSnapshot)
+
+    progression.value = progressionSnapshot
   } catch (e) {
     analysisError.value = `Une erreur est survenue : ${e.message}`
     analysisStore.clearResult()
@@ -130,14 +141,14 @@ async function analyzeProgression() {
 const currentlyEditingChord = computed({
   get() {
     if (!editingChordId.value) return null
-    let found = progression.value.find((c) => c.id === editingChordId.value)
+    let found = localProgression.value.find((c) => c.id === editingChordId.value)
     return found || lastChordPlayedFromAnalyze.value
   },
   set(newValue) {
     if (!newValue || !editingChordId.value) return
-    const index = progression.value.findIndex((c) => c.id === editingChordId.value)
+    const index = localProgression.value.findIndex((c) => c.id === editingChordId.value)
     if (index !== -1) {
-      progression.value[index] = newValue
+      localProgression.value[index] = newValue
     }
   }
 })

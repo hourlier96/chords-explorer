@@ -48,7 +48,7 @@ def detect_tonic_and_mode(progression: list[str], model) -> dict:
         "2. **Segments Harmoniques :** Découpe la progression en segments logiques "
         "(ex: cadences ii-V-I, modulations). Pour chaque segment, identifie sa tonalité "
         "(tonique et mode) et sa fonction. Deux segments adjacents ne doivent jamais "
-        "partager la même tonique et le même mode.\n"
+        "partager la même tonique et le même mode. Un segment doit contenir au moins 2 accords.\n"
         "3. **Format de Sortie :** Ta réponse doit **impérativement** être un objet JSON "
         "unique, sans aucun texte avant ou après. L'objet JSON doit contenir deux clés "
         "principales : `global_analysis` et `harmonic_segments`.\n\n"
