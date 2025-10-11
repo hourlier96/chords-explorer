@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import * as Tone from 'tone'
-import { metronome } from '@/metronome.js'
+import { metronome } from '@/utils/metronome.js'
 
 /**
  * Le cœur du lecteur audio, gère la boucle de lecture et l'état.

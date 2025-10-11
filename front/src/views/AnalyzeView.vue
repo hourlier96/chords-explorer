@@ -5,7 +5,8 @@
         <v-row>
           <v-col cols="12" class="pl-0">
             <ChordProgressionBuilder
-              v-model="progression"
+              :model-value="progression"
+              @update:model-value="progression = $event"
               :is-loading="isLoading"
               :error="analysisError"
               v-model:ai-model="selectedAiModel"
@@ -54,14 +55,14 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS_NORMALIZED, NOTES_FLAT } from '@/constants'
-import { useAnalysisStore } from '@/stores/analysis.js'
-import { piano, getNotesForChord, noteToMidi } from '@/sampler.js'
+import { useStores } from '@/composables/useStores.ts'
+import { piano, getNotesForChord, noteToMidi } from '@/utils/sampler.js'
 import ChordProgressionBuilder from '@/components/progression/ChordProgressionBuilder.vue'
 import PianoKeyboard from '@/components/common/PianoKeyboard.vue'
 import ChordEditor from '@/components/progression/ChordEditor.vue'
 import AnalysisGrid from '@/components/analysis/AnalysisGrid.vue'
 
-const analysisStore = useAnalysisStore()
+const { analysis: analysisStore } = useStores()
 const { activeProgression: progression, liveMidiNotes } = storeToRefs(analysisStore)
 
 const isLoading = ref(false)
@@ -118,7 +119,6 @@ async function analyzeProgression() {
 
     const progressionSnapshot = JSON.parse(JSON.stringify(progression.value))
     analysisStore.setLastAnalysis(data, progressionSnapshot)
-    analysisStore.setModel(selectedAiModel.value)
   } catch (e) {
     analysisError.value = `Une erreur est survenue : ${e.message}`
     analysisStore.clearResult()
@@ -130,7 +130,8 @@ async function analyzeProgression() {
 const currentlyEditingChord = computed({
   get() {
     if (!editingChordId.value) return null
-    return progression.value.find((c) => c.id === editingChordId.value)
+    let found = progression.value.find((c) => c.id === editingChordId.value)
+    return found || lastChordPlayedFromAnalyze.value
   },
   set(newValue) {
     if (!newValue || !editingChordId.value) return

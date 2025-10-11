@@ -3,6 +3,7 @@
     <div class="main-toolbar">
       <PlayerControls
         :is-playing="isPlaying"
+        :is-track-empty="items.length === 0"
         v-model:time-signature="timeSignature"
         v-model:is-metronome-active="isMetronomeActive"
         v-model:is-looping="isLooping"
@@ -79,8 +80,7 @@
 import { ref, computed, watch } from 'vue'
 import draggable from 'vuedraggable'
 
-import { BEAT_WIDTH, useStatePlayer } from '@/composables/useStatePlayer.js'
-import { sleep } from '@/utils.js'
+import { BEAT_WIDTH, useStatePlayer } from '@/composables/useStatePlayer.ts'
 import TimelineGrid from '@/components/common/TimelineGrid.vue'
 import PlayerControls from '@/components/common/PlayerControls.vue'
 

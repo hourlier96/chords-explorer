@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 import { getReasonPhrase } from 'http-status-codes'
 import { AxiosResponse } from 'axios'
-import { useStores } from '@/composables/use-stores.ts'
+import { useStores } from '@/composables/useStores.ts'
 import { SnackBar } from '@/types/api-types.ts'
 
 export async function wrapper(

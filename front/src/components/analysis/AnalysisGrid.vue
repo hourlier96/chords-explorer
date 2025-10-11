@@ -65,10 +65,10 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
-import { BEAT_WIDTH } from '@/composables/useStatePlayer.js'
-import { sleep } from '@/utils.js'
-import { piano } from '@/sampler.js'
-import { useTempoStore } from '@/stores/tempo.js'
+import { BEAT_WIDTH } from '@/composables/useStatePlayer.ts'
+import { useStores } from '@/composables/useStores.ts'
+import { sleep } from '@/utils/time.js'
+import { piano } from '@/utils/sampler.js'
 import ProgressionTimeline from '@/components/common/ProgressionTimeline.vue'
 import AnalysisCard from '@/components/analysis/AnalysisCard.vue'
 
@@ -81,9 +81,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:progressionItems', 'play-chord'])
 
-const tempoStore = useTempoStore()
+const { tempo: tempoStore } = useStores()
 const progressionState = ref([])
-
 const totalBeatsForCss = computed(() => {
   return displayedProgression.value.reduce((acc, chord) => acc + chord.duration, 0) || 8
 })

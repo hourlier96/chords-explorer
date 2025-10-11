@@ -76,7 +76,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { QUALITIES, NOTES } from '@/constants.js'
-import { piano, getNotesForChord } from '@/sampler.js'
+import { piano, getNotesForChord } from '@/utils/sampler.js'
 import { ALL_PLAYABLE_NOTES } from '@/keyboard.js'
 import { ENHARMONIC_EQUIVALENTS } from '@/constants.js'
 

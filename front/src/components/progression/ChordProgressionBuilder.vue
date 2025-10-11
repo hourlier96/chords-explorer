@@ -25,10 +25,31 @@
 
       <template #footer>
         <div class="footer-controls">
+          <v-tooltip
+            v-if="!showQuickImport && isMidiEnabled"
+            location="top"
+            text="Ajout automatique"
+          >
+            <template #activator="{ props }">
+              <button
+                v-bind="props"
+                class="add-button"
+                :style="{ backgroundColor: autoAddWithMidi ? 'lightgreen' : '' }"
+                @click="autoAddWithMidi = !autoAddWithMidi"
+              >
+                <v-icon> mdi-piano </v-icon>
+              </button>
+            </template>
+          </v-tooltip>
+
           <button v-if="!showQuickImport" class="add-button" @click="addChord()">+</button>
-          <button v-if="!showQuickImport" class="add-button" @click="showQuickImport = true">
-            <v-icon icon="mdi-keyboard" />
-          </button>
+          <v-tooltip v-if="!showQuickImport" location="top" text="Import textuel">
+            <template #activator="{ props }">
+              <button v-bind="props" class="add-button" @click="showQuickImport = true">
+                <v-icon icon="mdi-keyboard" />
+              </button>
+            </template>
+          </v-tooltip>
           <div v-if="showQuickImport">
             <input
               type="text"
@@ -114,19 +135,20 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia'
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 
-import { BEAT_WIDTH } from '@/composables/useStatePlayer.js'
-import { piano, getNotesAsMidi } from '@/sampler.js'
-import { sleep } from '@/utils.js'
-import { useTempoStore } from '@/stores/tempo.js'
-import { useAnalysisStore } from '@/stores/analysis.js'
+import { BEAT_WIDTH } from '@/composables/useStatePlayer.ts'
+import { piano, getNotesAsMidi } from '@/utils/sampler.js'
+import { sleep } from '@/utils/time.js'
+import { useStores } from '@/composables/useStores.ts'
 
 import ProgressionTimeline from '@/components/common/ProgressionTimeline.vue'
 import ChordCard from '@/components/progression/ChordCard.vue'
 
-const tempoStore = useTempoStore()
-const analysisStore = useAnalysisStore()
+const { analysis: analysisStore, tempo: tempoStore, midi: midiStore } = useStores()
+const { autoAddWithMidi } = storeToRefs(analysisStore)
+const { isMidiEnabled } = storeToRefs(midiStore)
 
 const props = defineProps({
   modelValue: { type: Array, required: true },

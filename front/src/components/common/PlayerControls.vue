@@ -61,7 +61,7 @@
             v-bind="tooltipProps"
             @click="$emit('play')"
             class="control-icon-button"
-            :disabled="isPlaying"
+            :disabled="isPlaying || isTrackEmpty"
           >
             <v-icon icon="mdi-play" />
           </button>
@@ -87,7 +87,8 @@
 import TempoControl from '@/components/common/TempoControl.vue'
 
 defineProps({
-  isPlaying: { type: Boolean, required: true }
+  isPlaying: { type: Boolean, required: true },
+  isTrackEmpty: { type: Boolean, required: true }
 })
 
 defineEmits(['play', 'stop'])

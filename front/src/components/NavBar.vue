@@ -3,17 +3,13 @@
     <h3 class="ml-4">Chords Explorer</h3>
     <v-app-bar-nav-icon />
     <v-spacer />
-    <v-btn
-      @click="analysisStore.toggleMidi"
-      :color="analysisStore.isMidiEnabled ? 'success' : 'grey'"
-      class="mr-2"
-    >
+    <v-btn @click="midi.toggleMidi" :color="midi.isMidiEnabled ? 'success' : 'grey'" class="mr-2">
       <v-icon left>mdi-piano</v-icon>
-      MIDI {{ analysisStore.isMidiEnabled ? 'ON' : 'OFF' }}
+      MIDI {{ midi.isMidiEnabled ? 'ON' : 'OFF' }}
     </v-btn>
     <v-btn @click="showLang = !showLang">
       <v-icon>
-        <country-flag :country="getFlag(prefStore.lang)" size="normal" />
+        <country-flag :country="getFlag(pref.lang)" size="normal" />
       </v-icon>
     </v-btn>
     <v-list v-if="showLang" :height="120" class="flag-list">
@@ -35,19 +31,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useLocale } from 'vuetify'
-import { preferencesStore } from '@/stores/preferences.ts'
-import { useAnalysisStore } from '@/stores/analysis'
 import { onMounted } from 'vue'
 import CountryFlag from 'vue-country-flag-next'
 import { countries_infos } from '@/../i18n/index.js'
+import { useStores } from '@/composables/useStores.js'
 
 const { current } = useLocale()
-const prefStore = preferencesStore()
+const { pref, analysis, midi } = useStores()
+
 const showLang = ref(false)
-const analysisStore = useAnalysisStore()
 
 onMounted(() => {
-  setLang(prefStore.lang)
+  setLang(pref.lang)
 })
 
 function getFlag(lang) {
@@ -57,7 +52,7 @@ function setLang(lang) {
   // Vuetify translation
   current.value = lang
   // Custom translation
-  prefStore.setLang(lang)
+  pref.setLang(lang)
   showLang.value = false
 }
 </script>
