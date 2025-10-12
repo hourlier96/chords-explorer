@@ -1,18 +1,29 @@
-import { ref, onUnmounted } from 'vue'
+import { reactive, toRefs, onUnmounted } from 'vue'
 import { WebMidi } from 'webmidi'
 import * as Tone from 'tone'
 import { piano } from '@/utils/sampler.js'
 
-export function useMidiInput() {
-  const isEnabled = ref(false)
-  let activeInput = null
+export interface MidiCallbacks {
+    onNoteOn?: (note: any) => void;
+    onNoteOff?: (note: any) => void;
+  }
 
+export function useMidiInput() {
+
+  const state = reactive({
+    isEnabled: false,
+    liveMidiNotes: new Set()
+  })
+  
+  // Le reste des variables non-réactives
+  let activeInput = null
   let isSustainPedalDown = false
   const sustainedNotes = new Set()
 
-  // On passe des callbacks pour que le composant "parent" décide quoi faire
-  async function enableMidi(callbacks = {}) {
-    if (isEnabled.value) return
+  
+
+  async function enableMidi(callbacks: MidiCallbacks = {}) {
+    if (state.isEnabled) return
     try {
       await WebMidi.enable()
       console.log('WebMidi enabled!')
@@ -25,9 +36,11 @@ export function useMidiInput() {
       activeInput = WebMidi.inputs[0]
       console.log(`Écoute sur : ${activeInput.name}`)
       
-      
-      // On déclenche les callbacks fournis, en jouant aussi le son
       activeInput.addListener('noteon', (e) => {
+        const newNotes = new Set(state.liveMidiNotes)
+        newNotes.add(e.note.identifier)
+        state.liveMidiNotes = newNotes
+
         sustainedNotes.delete(e.note.identifier)
         piano.triggerAttack(e.note.identifier, Tone.now(), e.velocity)
         callbacks.onNoteOn?.(e.note)
@@ -35,15 +48,10 @@ export function useMidiInput() {
 
       activeInput.addListener('controlchange', (e) => {
         if (e.controller.number === 64) {
-          if (e.value >= 0.5) { // webmidi.js normalizes value to 0-1
-            isSustainPedalDown = true
-          } else {
-            // Pedal is released
-            isSustainPedalDown = false
-            if (sustainedNotes.size > 0) {
-              piano.triggerRelease(Array.from(sustainedNotes), Tone.now())
-              sustainedNotes.clear()
-            }
+          isSustainPedalDown = e.value >= 0.5
+          if (!isSustainPedalDown && sustainedNotes.size > 0) {
+            piano.triggerRelease(Array.from(sustainedNotes), Tone.now())
+            sustainedNotes.clear()
           }
         }
       })
@@ -54,26 +62,35 @@ export function useMidiInput() {
         } else {
           piano.triggerRelease(e.note.identifier, Tone.now())
         }
-        callbacks.onNoteOff?.(e.note)
+          const newNotes = new Set(state.liveMidiNotes)
+          newNotes.delete(e.note.identifier)
+          state.liveMidiNotes = newNotes
+          callbacks.onNoteOff?.(e.note)
       })
 
-      isEnabled.value = true
+      state.isEnabled = true
     } catch (err) {
       console.error('Could not enable WebMidi.', err)
     }
   }
 
   function disableMidi() {
-    if (!isEnabled.value || !activeInput) return
-    activeInput.removeListener() // Enlève tous les listeners d'un coup
+    if (!state.isEnabled || !activeInput) return
+    activeInput.removeListener()
     WebMidi.disable()
     activeInput = null
-    isEnabled.value = false
+    state.isEnabled = false
     piano.releaseAll()
     console.log('WebMidi disabled.')
   }
 
   onUnmounted(disableMidi)
 
-  return { isEnabled, enableMidi, disableMidi }
+  // 3. On utilise toRefs pour que les propriétés puissent être déstructurées
+  // tout en restant réactives dans le composant qui les utilise.
+  return { 
+    ...toRefs(state), 
+    enableMidi, 
+    disableMidi 
+  }
 }

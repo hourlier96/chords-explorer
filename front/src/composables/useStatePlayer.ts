@@ -2,6 +2,7 @@
 
 import { ref, computed, watch } from 'vue'
 import * as Tone from 'tone'
+import { panicStop } from '@/utils/sampler.js'
 import { useCorePlayer } from '@/composables/useCorePlayer.js'
 import { useTempoStore } from '@/stores/tempo.js'
 
@@ -66,7 +67,6 @@ export function useStatePlayer(progressionSource, { onPlayItemAsync, piano }) {
     onStart: startAnimation,
     onStop: () => {
       stopAnimation()
-      piano?.releaseAll()
     }
   })
 
@@ -94,6 +94,7 @@ export function useStatePlayer(progressionSource, { onPlayItemAsync, piano }) {
   }
 
   const stopWrapper = () => {
+    panicStop() 
     coreStop()
     seekStartBeat.value = 0
     playheadPosition.value = 0

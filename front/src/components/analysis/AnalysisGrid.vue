@@ -37,11 +37,12 @@
             :key="segment.key"
             class="segment-bar"
             :style="{ gridColumn: `${segment.start} / span ${segment.duration}` }"
-            :class="{ 'has-local-override': segment.hasLocalOverride }"
           >
             <v-tooltip location="top" :text="segment.explanation">
               <template #activator="{ props }">
-                <span v-bind="props" class="segment-label">{{ segment.label }}</span>
+                <span v-bind="props" class="segment-label"
+                  >{{ segment.label }} <v-icon size="small">mdi-information</v-icon></span
+                >
               </template>
             </v-tooltip>
           </div>
@@ -257,15 +258,6 @@ const playAnalysisChordItem = async ({ item }) => {
   overflow: hidden;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-.segment-bar:hover {
-  background-color: rgba(100, 151, 204, 0.4);
-}
-
-.segment-bar.has-local-override {
-  border-color: #f1c40f;
-  box-shadow: 0 0 5px rgba(241, 196, 15, 0.5);
 }
 
 .mode-selector-wrapper.with-icon {

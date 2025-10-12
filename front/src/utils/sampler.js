@@ -2,7 +2,7 @@ import * as Tone from 'tone'
 import { NOTES_FLAT, ENHARMONIC_EQUIVALENTS, CHORD_FORMULAS } from '@/constants.js'
 
 const compressor = new Tone.Compressor({
-  threshold: -12,
+  threshold: -5,
   ratio: 4
 }).toDestination()
 
@@ -12,8 +12,8 @@ const eq = new Tone.EQ3({
   high: 2
 })
 const reverb = new Tone.Reverb({
-  decay: 2.5,
-  wet: 0.3,
+  decay: 1.5,
+  wet: 0.2,
   preDelay: 0.01
 }).toDestination()
 
@@ -48,6 +48,11 @@ export const piano = new Tone.Sampler({
 
 compressor.connect(reverb)
 const DEFAULT_REVERB_WET = reverb.wet.value
+
+export function panicStop() {
+  piano.releaseAll()
+  reverb.wet.rampTo(0, 0.1)
+}
 
 export function noteToMidi(note) {
   const octave = parseInt(note.slice(-1))

@@ -28,13 +28,16 @@
           <v-tooltip
             v-if="!showQuickImport && isMidiEnabled"
             location="top"
-            text="Ajout automatique"
+            text="Ajout automatique depuis le MIDI"
           >
             <template #activator="{ props }">
               <button
                 v-bind="props"
                 class="add-button"
-                :style="{ backgroundColor: autoAddWithMidi ? 'lightgreen' : '' }"
+                :style="{
+                  backgroundColor: autoAddWithMidi ? 'lightgreen' : '',
+                  border: 'none !important'
+                }"
                 @click="autoAddWithMidi = !autoAddWithMidi"
               >
                 <v-icon> mdi-piano </v-icon>

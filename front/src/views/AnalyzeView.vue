@@ -22,9 +22,7 @@
       </v-col>
       <v-col cols="5">
         <ChordEditor v-model="currentlyEditingChord" :disabled="lastChordPlayedFromAnalyze" />
-
         <PianoKeyboard
-          v-if="currentlyEditingChord"
           :active-notes="pianoDisplayNotes"
           class="mt-1"
           @add-note="(note) => recalculateChord(note, currentlyEditingChord, false)"
@@ -62,8 +60,9 @@ import PianoKeyboard from '@/components/common/PianoKeyboard.vue'
 import ChordEditor from '@/components/progression/ChordEditor.vue'
 import AnalysisGrid from '@/components/analysis/AnalysisGrid.vue'
 
-const { analysis: analysisStore } = useStores()
-const { activeProgression: progression, liveMidiNotes } = storeToRefs(analysisStore)
+const { analysis: analysisStore, midi: midiStore } = useStores()
+const { activeProgression: progression } = storeToRefs(analysisStore)
+const { liveMidiNotes } = storeToRefs(midiStore)
 
 const localProgression = ref(JSON.parse(JSON.stringify(progression.value)))
 watch(
@@ -87,20 +86,27 @@ const noMatch = ref(false)
 const analysisResults = computed(() => analysisStore.lastAnalysis.result)
 
 const lastChordPlayedFromAnalyze = ref(false)
+const lastPlayedAnalysisChord = ref(null)
 
 const pianoDisplayNotes = computed(() => {
   // Si le MIDI est actif et qu'au moins une note est jouée, on affiche les notes MIDI
-  if (analysisStore.isMidiEnabled && liveMidiNotes.value.length > 0) {
-    return liveMidiNotes.value
+  if (midiStore.isMidiEnabled && midiStore.liveMidiNotes.size > 0) {
+    return Array.from(midiStore.liveMidiNotes)
   }
   return selectedChordNotes.value
 })
 
-function launchEdition(chord, fromAnalyze = false) {
+async function launchEdition(chord, fromAnalyze = false) {
   lastChordPlayedFromAnalyze.value = fromAnalyze
+
+  if (fromAnalyze) {
+    lastPlayedAnalysisChord.value = chord
+  } else {
+    lastPlayedAnalysisChord.value = null
+  }
+
+  await nextTick()
   editingChordId.value = chord.id
-  selectedChordNotes.value = getNotesForChord(chord)
-  noMatch.value = false
   piano.play(chord)
 }
 
@@ -141,8 +147,14 @@ async function analyzeProgression() {
 const currentlyEditingChord = computed({
   get() {
     if (!editingChordId.value) return null
-    let found = localProgression.value.find((c) => c.id === editingChordId.value)
-    return found || lastChordPlayedFromAnalyze.value
+
+    if (
+      lastPlayedAnalysisChord.value &&
+      lastPlayedAnalysisChord.value.id === editingChordId.value
+    ) {
+      return lastPlayedAnalysisChord.value
+    }
+    return localProgression.value.find((c) => c.id === editingChordId.value)
   },
   set(newValue) {
     if (!newValue || !editingChordId.value) return
@@ -213,10 +225,10 @@ function recalculateChord(noteClicked, currentChord, remove = false) {
       .sort((a, b) => a - b)
 
     const sorted_formulas = Object.entries(CHORD_FORMULAS_NORMALIZED).sort(
-      ([, formulaA], [, formulaB]) => formulaB.length - formulaA.length
+      ([, formulaA], [, formulaB]) => (formulaB as number[]).length - (formulaA as number[]).length
     )
     for (const [quality, formula] of sorted_formulas) {
-      const sortedFormula = [...formula].sort((a, b) => a - b)
+      const sortedFormula = [...(formula as number[])].sort((a, b) => a - b)
       const isMatch =
         intervals.length === sortedFormula.length &&
         intervals.every((val, index) => val === sortedFormula[index])
@@ -226,7 +238,9 @@ function recalculateChord(noteClicked, currentChord, remove = false) {
         const normalizedLowestNote = ENHARMONIC_EQUIVALENTS[lowestNoteName] || lowestNoteName
         const lowestNoteIndex = NOTES_FLAT.indexOf(normalizedLowestNote)
         const bassNoteInterval = (lowestNoteIndex - rootIndex + 12) % 12
-        const inversionIndex = formula.findIndex((interval) => interval === bassNoteInterval)
+        const inversionIndex = (formula as number[]).findIndex(
+          (interval) => interval === bassNoteInterval
+        )
 
         foundMatchData = {
           root: potentialRootName,

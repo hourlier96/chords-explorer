@@ -4,7 +4,7 @@ import { useChordDetector } from '@/composables/useChordDetector.ts'
 
 export const useMidiStore = defineStore('midi', () => {
   // 1. Instantiate composables
-  const { isEnabled, enableMidi, disableMidi } = useMidiInput()
+  const { isEnabled, liveMidiNotes, enableMidi, disableMidi } = useMidiInput()
   const { detectedChord, handleNoteOn, handleNoteOff } = useChordDetector()
 
   // 3. The action to toggle MIDI remains the same
@@ -22,6 +22,7 @@ export const useMidiStore = defineStore('midi', () => {
   // 4. Expose the detected chord directly
   return {
     isMidiEnabled: isEnabled,
+    liveMidiNotes,
     toggleMidi,
     detectedChord
   }
