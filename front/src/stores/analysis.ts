@@ -16,7 +16,6 @@ export const useAnalysisStore = defineStore('analysis', () => {
       : defaultProgression
   );
   
-  const autoAddWithMidi = ref(true);
 
   // --- ACTIONS ---
   function addChordToProgression(newChord) {
@@ -42,7 +41,6 @@ export const useAnalysisStore = defineStore('analysis', () => {
   return {
     lastAnalysis,
     activeProgression,
-    autoAddWithMidi,
     addChordToProgression, // L'action principale
     setLastAnalysis,
     clearResult,

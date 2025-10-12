@@ -62,7 +62,6 @@ import AnalysisGrid from '@/components/analysis/AnalysisGrid.vue'
 
 const { analysis: analysisStore, midi: midiStore } = useStores()
 const { activeProgression: progression } = storeToRefs(analysisStore)
-const { liveMidiNotes } = storeToRefs(midiStore)
 
 const localProgression = ref(JSON.parse(JSON.stringify(progression.value)))
 watch(
@@ -89,7 +88,6 @@ const lastChordPlayedFromAnalyze = ref(false)
 const lastPlayedAnalysisChord = ref(null)
 
 const pianoDisplayNotes = computed(() => {
-  // Si le MIDI est actif et qu'au moins une note est jouée, on affiche les notes MIDI
   if (midiStore.isMidiEnabled && midiStore.liveMidiNotes.size > 0) {
     return Array.from(midiStore.liveMidiNotes)
   }

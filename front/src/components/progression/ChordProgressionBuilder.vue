@@ -150,8 +150,7 @@ import ProgressionTimeline from '@/components/common/ProgressionTimeline.vue'
 import ChordCard from '@/components/progression/ChordCard.vue'
 
 const { analysis: analysisStore, tempo: tempoStore, midi: midiStore } = useStores()
-const { autoAddWithMidi } = storeToRefs(analysisStore)
-const { isMidiEnabled } = storeToRefs(midiStore)
+const { isMidiEnabled, autoAddWithMidi, detectedChord } = storeToRefs(midiStore)
 
 const props = defineProps({
   modelValue: { type: Array, required: true },
@@ -242,10 +241,9 @@ function updateChord(index, newChord) {
 }
 
 watch(
-  // Use a getter function to watch a reactive property from a store
-  () => midiStore.detectedChord,
+  () => detectedChord.value,
   (newChord) => {
-    if (newChord && analysisStore.autoAddWithMidi) {
+    if (newChord && autoAddWithMidi.value) {
       addChord(newChord)
     }
   }

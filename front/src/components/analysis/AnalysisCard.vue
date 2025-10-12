@@ -17,7 +17,7 @@
           </template>
           <div class="borrowed-info-tooltip">
             <div v-for="(borrowed, idx) in borrowedInfo" :key="idx">
-              {{ analysis.result.tonic }}
+              {{ item.segment_context.tonic }}
               {{ borrowed }}
             </div>
           </div>
