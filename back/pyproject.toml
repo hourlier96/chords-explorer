@@ -1,47 +1,56 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "fastapi-base"
-version = "0.1.0"
-requires-python = ">=3.13"
-
-dependencies = [
-    "fastapi",
-    "google-generativeai"
-]
-
-
-[project.optional-dependencies]
-dev = [
-    "fastapi[standard]",
-    "debugpy", 
-    "ruff==0.11.7",
-    "mypy==1.15.0",
-    "pytest",
-    "pre-commit",
-]
-
 [tool.ruff]
-exclude = [
-    ".bzr", ".direnv", ".eggs", ".git", ".hg", ".mypy_cache", ".nox",
-    ".pants.d", ".ruff_cache", ".svn", ".tox", ".venv", "venv",
-    "__pypackages__", "_build", "buck-out", "build", "dist", "node_modules"
-]
 line-length = 100
 target-version = "py313"
 
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "node_modules",
+]
+
 [tool.ruff.lint]
-select = ["E", "F", "W", "I"]
+fixable = ["ALL"]
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes errors
+    "W",  # pycodestyle warnings
+    "I",  # import conventions
+    "N",  # naming conventions
+    "D",  # docstring conventions
+]
+ignore = [
+    "D100",  # Missing docstring in public module
+    "D101",  # Missing docstring in public class
+    "D103",  # Missing docstring in public function
+    "D106",  # Missing docstring in public nested class
+    "D107",  # Missing docstring in __init__
+    "D200",  # One-line docstring should fit on one line with quotes
+    "D203",  # 1 blank line required before class docstring
+    "D205",  # 1 blank line required after class docstring
+    "D212",  # Multi-line docstring summary should start at the first line
+    "D400",  # First line should end with a period
+    "D401",  # First line should be in imperative mood
+    "D415",  # First line should not be capitalized
+    "D417",  # Missing argument descriptions in the docstring
+    "E402",  # Module level import not at top of file
+    "E501",  # Line too long
+]
 
 [tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = true
 
 [tool.mypy]
-python_version = "3.13"    
-warn_return_any = true
-warn_unused_configs = true
-ignore_missing_imports = true
+explicit_package_bases = true
+follow_untyped_imports = true
 
 # https://github.com/pytest-dev/pytest-asyncio/issues/924
 [tool.pytest.ini_options]
