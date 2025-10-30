@@ -3,8 +3,8 @@
     <label for="bpm-input">BPM</label>
     <input
       id="bpm-input"
-      type="number"
       v-model.number="tempoStore.bpm"
+      type="number"
       min="20"
       max="300"
       class="tempo-input"
@@ -13,9 +13,9 @@
 </template>
 
 <script setup>
-import { useTempoStore } from '@/stores/tempo.js'
+import { useTempoStore } from "@/stores/tempo.js";
 
-const tempoStore = useTempoStore()
+const tempoStore = useTempoStore();
 </script>
 
 <style scoped>
@@ -48,7 +48,7 @@ const tempoStore = useTempoStore()
   -webkit-appearance: none;
   margin: 0;
 }
-.tempo-input[type='number'] {
+.tempo-input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }

@@ -3,21 +3,21 @@
     <ProgressionTimeline
       :items="displayedProgression"
       :play-callback="playAnalysisChordItem"
-      :draggable="false"
+      :isDraggable="false"
     >
       <template #header>
         <div class="substitution-header">
           <div v-if="!isSubstitution" class="legend">
             <div class="legend-item">
-              <div class="legend-dot" style="background-color: #2ecc71"></div>
+              <div class="legend-dot" style="background-color: #2ecc71" />
               <span>Diatonique</span>
             </div>
             <div class="legend-item">
-              <div class="legend-dot" style="background-color: #f1c40f"></div>
-              <span>Emprunts modaux</span>
+              <div class="legend-dot" style="background-color: #f1c40f" />
+              <span>Emprunts</span>
             </div>
             <div class="legend-item">
-              <div class="legend-dot" style="background-color: red"></div>
+              <div class="legend-dot" style="background-color: red" />
               <span>Hors tonalité</span>
             </div>
           </div>
@@ -29,19 +29,22 @@
           class="segments-track"
           :style="{
             '--total-beats': totalBeatsForCss,
-            '--beat-width': `${BEAT_WIDTH}px`
+            '--beat-width': `${BEAT_WIDTH}px`,
           }"
         >
           <div
             v-for="segment in harmonicSegments"
             :key="segment.key"
             class="segment-bar"
-            :style="{ gridColumn: `${segment.start} / span ${segment.duration}` }"
+            :style="{
+              gridColumn: `${segment.start} / span ${segment.duration}`,
+            }"
           >
             <v-tooltip location="top" :text="segment.explanation">
               <template #activator="{ props }">
                 <span v-bind="props" class="segment-label"
-                  >{{ segment.label }} <v-icon size="small">mdi-information</v-icon></span
+                  >{{ segment.label }}
+                  <v-icon size="small">mdi-information</v-icon></span
                 >
               </template>
             </v-tooltip>
@@ -64,29 +67,34 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } from "vue";
 
-import { BEAT_WIDTH } from '@/composables/useStatePlayer.ts'
-import { useStores } from '@/composables/useStores.ts'
-import { sleep } from '@/utils/time.js'
-import { piano } from '@/utils/sampler.js'
-import ProgressionTimeline from '@/components/common/ProgressionTimeline.vue'
-import AnalysisCard from '@/components/analysis/AnalysisCard.vue'
+import { BEAT_WIDTH } from "@/composables/useStatePlayer.ts";
+import { useStores } from "@/composables/useStores.ts";
+import { sleep } from "@/utils/time.js";
+import { piano } from "@/utils/sampler.js";
+import ProgressionTimeline from "@/components/common/ProgressionTimeline.vue";
+import AnalysisCard from "@/components/analysis/AnalysisCard.vue";
 
 const props = defineProps({
   title: { type: String, required: true },
   progressionItems: { type: Array, required: true },
   analysis: { type: Object, required: true },
-  isSubstitution: { type: Boolean, default: false }
-})
+  isSubstitution: { type: Boolean, default: false },
+});
 
-const emit = defineEmits(['update:progressionItems', 'play-chord'])
+const emit = defineEmits(["update:progressionItems", "play-chord"]);
 
-const { tempo: tempoStore } = useStores()
-const progressionState = ref([])
+const { tempo: tempoStore } = useStores();
+const progressionState = ref([]);
 const totalBeatsForCss = computed(() => {
-  return displayedProgression.value.reduce((acc, chord) => acc + chord.duration, 0) || 8
-})
+  return (
+    displayedProgression.value.reduce(
+      (acc, chord) => acc + chord.duration,
+      0,
+    ) || 8
+  );
+});
 
 watch(
   () => props.progressionItems,
@@ -94,83 +102,83 @@ watch(
     progressionState.value = newItems.map((item) => ({
       ...item,
       duration: item.duration || 2,
-      inversion: item.inversion || 0
-    }))
+      inversion: item.inversion || 0,
+    }));
   },
-  { immediate: true, deep: true }
-)
+  { immediate: true, deep: true },
+);
 
 const displayedProgression = computed(() => {
-  const baseProgression = progressionState.value.map((item, index) => {
-    if (!item.segment_context) return item
-    return item
-  })
+  const baseProgression = progressionState.value.map((item) => {
+    if (!item.segment_context) return item;
+    return item;
+  });
 
-  let currentBeat = 1
+  let currentBeat = 1;
   return baseProgression.map((chord) => {
-    const start = currentBeat
-    currentBeat += chord.duration
-    return { ...chord, start }
-  })
-})
+    const start = currentBeat;
+    currentBeat += chord.duration;
+    return { ...chord, start };
+  });
+});
 
 const harmonicSegments = computed(() => {
-  const progression = displayedProgression.value
+  const progression = displayedProgression.value;
   if (!progression || progression.length === 0) {
-    return []
+    return [];
   }
-  const segments = []
-  let currentSegment = null
+  const segments = [];
+  let currentSegment = null;
   progression.forEach((item) => {
-    if (!item.segment_context) return
-    const segmentKey = item.segment_context.explanation
+    if (!item.segment_context) return;
+    const segmentKey = item.segment_context.explanation;
 
     if (currentSegment && currentSegment.key === segmentKey) {
-      currentSegment.duration += item.duration
+      currentSegment.duration += item.duration;
     } else {
-      if (currentSegment) segments.push(currentSegment)
+      if (currentSegment) segments.push(currentSegment);
 
       currentSegment = {
         key: segmentKey,
         start: item.start,
         duration: item.duration,
         label: `${item.segment_context.tonic} ${item.segment_context.mode}`,
-        explanation: item.segment_context.explanation
-      }
+        explanation: item.segment_context.explanation,
+      };
     }
-  })
+  });
   if (currentSegment) {
-    segments.push(currentSegment)
+    segments.push(currentSegment);
   }
-  return segments
-})
+  return segments;
+});
 
 function updateProgressionItem(index, newItem) {
-  const newProgression = [...progressionState.value]
-  const cleanItem = { ...newItem }
-  delete cleanItem.start
-  newProgression[index] = cleanItem
-  progressionState.value = newProgression
-  emit('update:progressionItems', newProgression)
+  const newProgression = [...progressionState.value];
+  const cleanItem = { ...newItem };
+  delete cleanItem.start;
+  newProgression[index] = cleanItem;
+  progressionState.value = newProgression;
+  emit("update:progressionItems", newProgression);
 }
 
 const playAnalysisChordItem = async ({ item }) => {
-  if (!item.chord) return
+  if (!item.chord) return;
   const chordToPlay = {
     id: item.id,
     notes: item.notes,
     root: item.expected_chord_name.match(/^[A-G][#b]?/)?.[0],
     quality: item.found_quality,
     inversion: item.inversion,
-    duration: item.duration
-  }
+    duration: item.duration,
+  };
   if (chordToPlay.duration > 0) {
-    const chordDurationMs = chordToPlay.duration * tempoStore.beatDurationMs
-    emit('play-chord', chordToPlay)
-    piano.play(chordToPlay)
-    await sleep(chordDurationMs)
+    const chordDurationMs = chordToPlay.duration * tempoStore.beatDurationMs;
+    emit("play-chord", chordToPlay);
+    piano.play(chordToPlay);
+    await sleep(chordDurationMs);
   }
-}
+};
 </script>
 
 <style scoped>

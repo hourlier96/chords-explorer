@@ -14,7 +14,7 @@ def get_tritone_substitute(chord_name):
     if not is_dominant_chord(chord_name, parsed_chord):
         return "", "Non dominant"
 
-    root_index, _ = parsed_chord
+    root_index, _, _ = parsed_chord
 
     # Calculer la nouvelle fondamentale (à +6 demi-tons)
     sub_root_index = (root_index + 6) % 12

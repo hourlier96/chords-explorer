@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.13.1'
+    rev: "v0.13.1"
     hooks:
       - id: ruff
         args: [., --fix, --exit-non-zero-on-fix]
@@ -9,13 +9,15 @@ repos:
         files: ^back/
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.15.0'
+    rev: "v1.15.0"
     hooks:
       - id: mypy
-        args: [
-          --ignore-missing-imports,
-          --disabled-error-codes=import-untyped,
-        ]
+        args:
+          [
+            --ignore-missing-imports,
+            --disable-error-code=import-untyped,
+            --explicit-package-bases,
+          ]
         files: ^back/.*\.py$
 
   - repo: https://github.com/pre-commit/pre-commit-hooks

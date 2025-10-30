@@ -1,464 +1,476 @@
 export const NOTES = [
-  'C',
-  'C# / Db',
-  'D',
-  'D# / Eb',
-  'E',
-  'F',
-  'F# / Gb',
-  'G',
-  'G# / Ab',
-  'A',
-  'A# / Bb',
-  'B'
-]
-export const NOTES_FLAT = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+  "C",
+  "C# / Db",
+  "D",
+  "D# / Eb",
+  "E",
+  "F",
+  "F# / Gb",
+  "G",
+  "G# / Ab",
+  "A",
+  "A# / Bb",
+  "B",
+];
+export const NOTES_FLAT = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
 export const ENHARMONIC_EQUIVALENTS = {
-  Db: 'C#',
-  Eb: 'D#',
-  Gb: 'F#',
-  Ab: 'G#',
-  Bb: 'A#'
-}
+  Db: "C#",
+  Eb: "D#",
+  Gb: "F#",
+  Ab: "G#",
+  Bb: "A#",
+};
 export const QUALITIES = [
   {
-    label: 'Majeurs',
+    label: "Majeurs",
     options: [
-      { value: '', text: 'Majeur' },
-      { value: '6', text: 'Majeur 6' },
-      { value: '6(no5)', text: 'Majeur 6(no5)' },
-      { value: '6/9', text: 'Majeur 6/9' },
-      { value: '6/9(no5)', text: 'Majeur 6/9(no5)' },
-      { value: 'add9', text: 'Add 9' },
-      { value: 'add9(no5)', text: 'Add 9(no5)' },
-      { value: 'add11', text: 'Add 11' },
-      { value: 'add11(no5)', text: 'Add 11(no5)' },
-      { value: 'maj7', text: 'Majeur 7 (Δ)' },
-      { value: 'maj7(no5)', text: 'Majeur 7(no5)' },
-      { value: 'maj9', text: 'Majeur 9' },
-      { value: 'maj9(no5)', text: 'Majeur 9(no5)' },
-      { value: 'maj11', text: 'Majeur 11' },
-      { value: 'maj11(no5)', text: 'Majeur 11(no5)' },
-      { value: 'maj13', text: 'Majeur 13' },
-      { value: 'maj13(no5)', text: 'Majeur 13(no5)' },
-      { value: 'maj7#5', text: 'Majeur 7♯5' },
-      { value: 'maj7b5', text: 'Majeur 7♭5' }
-    ]
+      { value: "", text: "Majeur" },
+      { value: "6", text: "Majeur 6" },
+      { value: "6(no5)", text: "Majeur 6(no5)" },
+      { value: "6/9", text: "Majeur 6/9" },
+      { value: "6/9(no5)", text: "Majeur 6/9(no5)" },
+      { value: "add9", text: "Add 9" },
+      { value: "add9(no5)", text: "Add 9(no5)" },
+      { value: "add11", text: "Add 11" },
+      { value: "add11(no5)", text: "Add 11(no5)" },
+      { value: "maj7", text: "Majeur 7 (Δ)" },
+      { value: "maj7(no5)", text: "Majeur 7(no5)" },
+      { value: "maj9", text: "Majeur 9" },
+      { value: "maj9(no5)", text: "Majeur 9(no5)" },
+      { value: "maj11", text: "Majeur 11" },
+      { value: "maj11(no5)", text: "Majeur 11(no5)" },
+      { value: "maj13", text: "Majeur 13" },
+      { value: "maj13(no5)", text: "Majeur 13(no5)" },
+      { value: "maj7#5", text: "Majeur 7♯5" },
+      { value: "maj7b5", text: "Majeur 7♭5" },
+    ],
   },
   {
-    label: 'Mineurs',
+    label: "Mineurs",
     options: [
-      { value: 'm', text: 'Mineur' },
-      { value: 'm6', text: 'Mineur 6' },
-      { value: 'm6(no5)', text: 'Mineur 6(no5)' },
-      { value: 'm(6/9)', text: 'Mineur 6/9' },
-      { value: 'm(6/9)(no5)', text: 'Mineur 6/9(no5)' },
-      { value: 'm(add9)', text: 'm(add9)' },
-      { value: 'm(add9)(no5)', text: 'm(add9)(no5)' },
-      { value: 'm(add11)(no5)', text: 'm(add11)(no5)' },
-      { value: 'm7', text: 'Mineur 7' },
-      { value: 'm7(no5)', text: 'Mineur 7(no5)' },
-      { value: 'm7b9', text: 'Mineur 7♭9' },
-      { value: 'm7b9(no5)', text: 'Mineur 7♭9(no5)' },
-      { value: 'm9', text: 'Mineur 9' },
-      { value: 'm9(no5)', text: 'Mineur 9(no5)' },
-      { value: 'm11', text: 'Mineur 11' },
-      { value: 'm11(no5)', text: 'Mineur 11(no5)' },
-      { value: 'm13', text: 'Mineur 13' },
-      { value: 'm13(no5)', text: 'Mineur 13(no5)' },
-      { value: 'm(maj7)', text: 'm(maj7)' },
-      { value: 'm(maj7)(no5)', text: 'm(maj7)(no5)' }
-    ]
+      { value: "m", text: "Mineur" },
+      { value: "m6", text: "Mineur 6" },
+      { value: "m6(no5)", text: "Mineur 6(no5)" },
+      { value: "m(6/9)", text: "Mineur 6/9" },
+      { value: "m(6/9)(no5)", text: "Mineur 6/9(no5)" },
+      { value: "m(add9)", text: "m(add9)" },
+      { value: "m(add9)(no5)", text: "m(add9)(no5)" },
+      { value: "m(add11)(no5)", text: "m(add11)(no5)" },
+      { value: "m7", text: "Mineur 7" },
+      { value: "m7(no5)", text: "Mineur 7(no5)" },
+      { value: "m7b9", text: "Mineur 7♭9" },
+      { value: "m7b9(no5)", text: "Mineur 7♭9(no5)" },
+      { value: "m9", text: "Mineur 9" },
+      { value: "m9(no5)", text: "Mineur 9(no5)" },
+      { value: "m11", text: "Mineur 11" },
+      { value: "m11(no5)", text: "Mineur 11(no5)" },
+      { value: "m13", text: "Mineur 13" },
+      { value: "m13(no5)", text: "Mineur 13(no5)" },
+      { value: "m(maj7)", text: "m(maj7)" },
+      { value: "m(maj7)(no5)", text: "m(maj7)(no5)" },
+    ],
   },
   {
-    label: 'Dominantes',
+    label: "Dominantes",
     options: [
-      { value: '7', text: '7' },
-      { value: '7(no5)', text: '7(no5)' },
-      { value: '9', text: '9' },
-      { value: '9(no5)', text: '9(no5)' },
-      { value: '11', text: '11' },
-      { value: '11(no5)', text: '11(no5)' },
-      { value: '11(no3)', text: '11 (no 3rd)' },
-      { value: '13', text: '13' },
-      { value: '13(no5)', text: '13(no5)' },
-      { value: '7b5', text: '7♭5' },
-      { value: '7#5', text: '7♯5' },
-      { value: '7b9', text: '7♭9' },
-      { value: '7b9(no5)', text: '7♭9(no5)' },
-      { value: '7#9', text: '7♯9' },
-      { value: '7#9(no5)', text: '7♯9(no5)' },
-      { value: '7#11', text: '7♯11' },
-      { value: '7#11(no5)', text: '7♯11(no5)' },
-      { value: '7b13', text: '7♭13' },
-      { value: '7b13(no5)', text: '7♭13(no5)' },
-      { value: '9b5', text: '9♭5' },
-      { value: '9#5', text: '9♯5' }
-    ]
+      { value: "7", text: "7" },
+      { value: "7(no5)", text: "7(no5)" },
+      { value: "9", text: "9" },
+      { value: "9(no5)", text: "9(no5)" },
+      { value: "11", text: "11" },
+      { value: "11(no5)", text: "11(no5)" },
+      { value: "11(no3)", text: "11 (no 3rd)" },
+      { value: "13", text: "13" },
+      { value: "13(no5)", text: "13(no5)" },
+      { value: "7b5", text: "7♭5" },
+      { value: "7#5", text: "7♯5" },
+      { value: "7b9", text: "7♭9" },
+      { value: "7b9(no5)", text: "7♭9(no5)" },
+      { value: "7#9", text: "7♯9" },
+      { value: "7#9(no5)", text: "7♯9(no5)" },
+      { value: "7#11", text: "7♯11" },
+      { value: "7#11(no5)", text: "7♯11(no5)" },
+      { value: "7b13", text: "7♭13" },
+      { value: "7b13(no5)", text: "7♭13(no5)" },
+      { value: "9b5", text: "9♭5" },
+      { value: "9#5", text: "9♯5" },
+    ],
   },
   {
-    label: 'Dominantes Altérées',
+    label: "Dominantes Altérées",
     options: [
-      { value: '7alt', text: '7alt' },
-      { value: '7b9b5', text: '7♭9♭5' },
-      { value: '7b9#5', text: '7♭9♯5' },
-      { value: '7#9b5', text: '7♯9♭5' },
-      { value: '7#9#5', text: '7♯9♯5' }
-    ]
+      { value: "7alt", text: "7alt" },
+      { value: "7b9b5", text: "7♭9♭5" },
+      { value: "7b9#5", text: "7♭9♯5" },
+      { value: "7#9b5", text: "7♯9♭5" },
+      { value: "7#9#5", text: "7♯9♯5" },
+    ],
   },
   {
-    label: 'Suspendus',
+    label: "Suspendus",
     options: [
-      { value: 'sus2', text: 'sus2' },
-      { value: 'sus4', text: 'sus4' },
-      { value: '7sus2', text: '7sus2' },
-      { value: '7sus4', text: '7sus4' },
-      { value: '9sus4', text: '9sus4' }
-    ]
+      { value: "sus2", text: "sus2" },
+      { value: "sus4", text: "sus4" },
+      { value: "7sus2", text: "7sus2" },
+      { value: "7sus4", text: "7sus4" },
+      { value: "9sus4", text: "9sus4" },
+    ],
   },
   {
-    label: 'Diminués',
+    label: "Diminués",
     options: [
-      { value: 'dim', text: 'Diminué (°)' },
-      { value: 'dim7', text: 'Diminué 7 (°7)' },
-      { value: 'm7b5', text: 'm7b5 (ø)' }, // Demi-diminué
-      { value: 'm(add9)b5', text: 'm(add9)♭5' }
-    ]
+      { value: "dim", text: "Diminué (°)" },
+      { value: "dim7", text: "Diminué 7 (°7)" },
+      { value: "m7b5", text: "m7b5 (ø)" }, // Demi-diminué
+      { value: "m(add9)b5", text: "m(add9)♭5" },
+    ],
   },
   {
-    label: 'Augmentés',
-    options: [{ value: 'aug', text: 'Augmenté (+)' }]
+    label: "Augmentés",
+    options: [{ value: "aug", text: "Augmenté (+)" }],
   },
   {
-    label: 'Autres',
+    label: "Autres",
     options: [
-      { value: '5', text: 'Power Chord' },
-      { value: 'quartal', text: 'Quartal' },
-      { value: 'mu', text: 'Mu Major (μ)' },
-      { value: 'split3', text: 'Split-third' },
-      { value: '7(maj7)', text: '7(maj7)' },
-      { value: '7(maj7)(no5)', text: '7(maj7)(no5)' }
-    ]
-  }
-]
+      { value: "5", text: "Power Chord" },
+      { value: "quartal", text: "Quartal" },
+      { value: "mu", text: "Mu Major (μ)" },
+      { value: "split3", text: "Split-third" },
+      { value: "7(maj7)", text: "7(maj7)" },
+      { value: "7(maj7)(no5)", text: "7(maj7)(no5)" },
+    ],
+  },
+];
 
 export const CHORD_FORMULAS = {
   // --- Triades de base ---
-  '': [0, 4, 7],
+  "": [0, 4, 7],
   M: [0, 4, 7],
   maj: [0, 4, 7],
   m: [0, 3, 7],
   min: [0, 3, 7],
-  '-': [0, 3, 7],
+  "-": [0, 3, 7],
   dim: [0, 3, 6],
   d: [0, 3, 6],
-  '°': [0, 3, 6],
+  "°": [0, 3, 6],
   aug: [0, 4, 8],
-  '+': [0, 4, 8],
+  "+": [0, 4, 8],
   5: [0, 7], // --- Accords Suspendus ---
 
   sus2: [0, 2, 7],
   sus4: [0, 5, 7],
-  '7sus2': [0, 2, 7, 10],
-  '7sus4': [0, 5, 7, 10],
-  '9sus4': [0, 5, 7, 10, 14],
-  '13sus4': [0, 5, 7, 10, 14, 21], // --- Accords "Add" ---
+  "7sus2": [0, 2, 7, 10],
+  "7sus4": [0, 5, 7, 10],
+  "9sus4": [0, 5, 7, 10, 14],
+  "13sus4": [0, 5, 7, 10, 14, 21], // --- Accords "Add" ---
 
   add2: [0, 4, 7, 14],
   add4: [0, 4, 7, 17],
   add9: [0, 4, 7, 14],
-  'add9(no5)': [0, 4, 14],
+  "add9(no5)": [0, 4, 14],
   add11: [0, 4, 7, 17],
-  'add11(no5)': [0, 4, 17],
-  'm(add9)': [0, 3, 7, 14],
-  'm(add9)(no5)': [0, 3, 14],
-  'm(add11)(no5)': [0, 3, 17], // --- Accords de Sixte ---
+  "add11(no5)": [0, 4, 17],
+  "m(add9)": [0, 3, 7, 14],
+  "m(add9)(no5)": [0, 3, 14],
+  "m(add11)(no5)": [0, 3, 17], // --- Accords de Sixte ---
 
   6: [0, 4, 7, 9],
-  '6(no5)': [0, 4, 9],
+  "6(no5)": [0, 4, 9],
   m6: [0, 3, 7, 9],
-  'm6(no5)': [0, 3, 9],
-  '-6': [0, 3, 7, 9],
-  '6/9': [0, 4, 7, 9, 14],
-  '6/9(no5)': [0, 4, 9, 14],
-  'm(6/9)': [0, 3, 7, 9, 14],
-  'm(6/9)(no5)': [0, 3, 9, 14], // --- Accords de Septième ---
+  "m6(no5)": [0, 3, 9],
+  "-6": [0, 3, 7, 9],
+  "6/9": [0, 4, 7, 9, 14],
+  "6/9(no5)": [0, 4, 9, 14],
+  "m(6/9)": [0, 3, 7, 9, 14],
+  "m(6/9)(no5)": [0, 3, 9, 14], // --- Accords de Septième ---
 
   7: [0, 4, 7, 10],
-  '7(no5)': [0, 4, 10],
+  "7(no5)": [0, 4, 10],
   maj7: [0, 4, 7, 11],
-  'maj7(no5)': [0, 4, 11],
+  "maj7(no5)": [0, 4, 11],
   M7: [0, 4, 7, 11],
   Δ: [0, 4, 7, 11],
   m7: [0, 3, 7, 10],
-  'm7(no5)': [0, 3, 10],
+  "m7(no5)": [0, 3, 10],
   m7b9: [0, 3, 7, 10, 13],
-  'm7b9(no5)': [0, 3, 10, 13],
+  "m7b9(no5)": [0, 3, 10, 13],
   min7: [0, 3, 7, 10],
-  '-7': [0, 3, 7, 10],
+  "-7": [0, 3, 7, 10],
   dim7: [0, 3, 6, 9],
-  '°7': [0, 3, 6, 9],
+  "°7": [0, 3, 6, 9],
   m7b5: [0, 3, 6, 10],
   ø: [0, 3, 6, 10],
-  'm(add9)b5': [0, 3, 6, 14],
-  'm(maj7)': [0, 3, 7, 11],
-  'm(maj7)(no5)': [0, 3, 11],
+  "m(add9)b5": [0, 3, 6, 14],
+  "m(maj7)": [0, 3, 7, 11],
+  "m(maj7)(no5)": [0, 3, 11],
   mM7: [0, 3, 7, 11],
   maj7b5: [0, 4, 6, 11],
-  'maj7#5': [0, 4, 8, 11],
-  'maj7#11': [0, 4, 7, 11, 18], // --- Accords de Septième de Dominante ---
+  "maj7#5": [0, 4, 8, 11],
+  "maj7#11": [0, 4, 7, 11, 18], // --- Accords de Septième de Dominante ---
 
-  '7b5': [0, 4, 6, 10],
-  '7#5': [0, 4, 8, 10],
-  '7(maj7)': [0, 4, 7, 10, 11],
-  '7(maj7)(no5)': [0, 4, 10, 11],
-  '+7': [0, 4, 8, 10],
-  '7b9': [0, 4, 7, 10, 13],
-  '7b9(no5)': [0, 4, 10, 13],
-  '7b13': [0, 4, 7, 10, 20],
-  '7b13(no5)': [0, 4, 10, 20],
-  '7#9': [0, 4, 7, 10, 15],
-  '7#9(no5)': [0, 4, 10, 15],
-  '7#11': [0, 4, 7, 10, 18],
-  '7#11(no5)': [0, 4, 10, 18],
-  '7alt': [0, 4, 10, 13, 18],
-  '7b9b5': [0, 4, 6, 10, 13],
-  '7b9#5': [0, 4, 8, 10, 13],
-  '7#9b5': [0, 4, 6, 10, 15],
-  '7#9#5': [0, 4, 8, 10, 15],
-  '7b9#9': [0, 4, 7, 10, 13, 15],
-  '7b9#11': [0, 4, 7, 10, 13, 18],
-  '7#9#11': [0, 4, 7, 10, 15, 18],
-  '7b9b13': [0, 4, 7, 10, 13, 20],
-  '7#9b13': [0, 4, 7, 10, 15, 20], // --- Accords étendus ---
+  "7b5": [0, 4, 6, 10],
+  "7#5": [0, 4, 8, 10],
+  "7(maj7)": [0, 4, 7, 10, 11],
+  "7(maj7)(no5)": [0, 4, 10, 11],
+  "+7": [0, 4, 8, 10],
+  "7b9": [0, 4, 7, 10, 13],
+  "7b9(no5)": [0, 4, 10, 13],
+  "7b13": [0, 4, 7, 10, 20],
+  "7b13(no5)": [0, 4, 10, 20],
+  "7#9": [0, 4, 7, 10, 15],
+  "7#9(no5)": [0, 4, 10, 15],
+  "7#11": [0, 4, 7, 10, 18],
+  "7#11(no5)": [0, 4, 10, 18],
+  "7alt": [0, 4, 10, 13, 18],
+  "7b9b5": [0, 4, 6, 10, 13],
+  "7b9#5": [0, 4, 8, 10, 13],
+  "7#9b5": [0, 4, 6, 10, 15],
+  "7#9#5": [0, 4, 8, 10, 15],
+  "7b9#9": [0, 4, 7, 10, 13, 15],
+  "7b9#11": [0, 4, 7, 10, 13, 18],
+  "7#9#11": [0, 4, 7, 10, 15, 18],
+  "7b9b13": [0, 4, 7, 10, 13, 20],
+  "7#9b13": [0, 4, 7, 10, 15, 20], // --- Accords étendus ---
 
   9: [0, 4, 7, 10, 14],
-  '9(no5)': [0, 4, 10, 14],
+  "9(no5)": [0, 4, 10, 14],
   maj9: [0, 4, 7, 11, 14],
-  'maj9(no5)': [0, 4, 11, 14],
+  "maj9(no5)": [0, 4, 11, 14],
   M9: [0, 4, 7, 11, 14],
   m9: [0, 3, 7, 10, 14],
-  'm9(no5)': [0, 3, 10, 14],
-  '-9': [0, 3, 7, 10, 14],
+  "m9(no5)": [0, 3, 10, 14],
+  "-9": [0, 3, 7, 10, 14],
   11: [0, 4, 7, 10, 14, 17],
-  '11(no5)': [0, 4, 10, 14, 17],
-  '11(no3)': [0, 7, 10, 14, 17],
+  "11(no5)": [0, 4, 10, 14, 17],
+  "11(no3)": [0, 7, 10, 14, 17],
   m11: [0, 3, 7, 10, 14, 17],
-  'm11(no5)': [0, 3, 10, 14, 17],
-  '-11': [0, 3, 7, 10, 14, 17],
+  "m11(no5)": [0, 3, 10, 14, 17],
+  "-11": [0, 3, 7, 10, 14, 17],
   maj11: [0, 4, 7, 11, 14, 17],
-  'maj11(no5)': [0, 4, 11, 14, 17],
-  'maj11(no5,no9)': [0, 4, 5, 11],
+  "maj11(no5)": [0, 4, 11, 14, 17],
+  "maj11(no5,no9)": [0, 4, 5, 11],
   13: [0, 4, 7, 10, 14, 21],
-  '13(no5)': [0, 4, 10, 14, 21],
-  '13#11': [0, 4, 7, 10, 14, 18, 21],
+  "13(no5)": [0, 4, 10, 14, 21],
+  "13#11": [0, 4, 7, 10, 14, 18, 21],
   m13: [0, 3, 7, 10, 14, 21],
-  'm13(no5)': [0, 3, 10, 14, 21],
-  '-13': [0, 3, 7, 10, 14, 21],
+  "m13(no5)": [0, 3, 10, 14, 21],
+  "-13": [0, 3, 7, 10, 14, 21],
   maj13: [0, 4, 7, 11, 14, 21],
-  'maj13(no5)': [0, 4, 11, 14, 21], // --- Autres ---
+  "maj13(no5)": [0, 4, 11, 14, 21], // --- Autres ---
 
   quartal: [0, 5, 10],
   split3: [0, 3, 4, 7],
-  mu: [0, 4, 14]
-}
+  mu: [0, 4, 14],
+};
 
 // Normalized chord formulas with modulos for detection
 export const CHORD_FORMULAS_NORMALIZED = {
-  '': [0, 4, 7],
+  "": [0, 4, 7],
   M: [0, 4, 7],
   maj: [0, 4, 7],
   m: [0, 3, 7],
   min: [0, 3, 7],
-  '-': [0, 3, 7],
+  "-": [0, 3, 7],
   dim: [0, 3, 6],
-  '°': [0, 3, 6],
+  "°": [0, 3, 6],
   aug: [0, 4, 8],
-  '+': [0, 4, 8],
+  "+": [0, 4, 8],
   5: [0, 7],
 
   7: [0, 4, 7, 10],
-  '7(no5)': [0, 4, 10],
+  "7(no5)": [0, 4, 10],
   maj7: [0, 4, 7, 11],
-  'maj7(no5)': [0, 4, 11],
-  '7(maj7)': [0, 4, 7, 10, 11],
-  '7(maj7)(no5)': [0, 4, 10, 11],
+  "maj7(no5)": [0, 4, 11],
+  "7(maj7)": [0, 4, 7, 10, 11],
+  "7(maj7)(no5)": [0, 4, 10, 11],
   M7: [0, 4, 7, 11],
   Δ: [0, 4, 7, 11],
   m7: [0, 3, 7, 10],
-  'm7(no5)': [0, 3, 10],
+  "m7(no5)": [0, 3, 10],
   m7b9: [0, 3, 7, 10, 1],
-  'm7b9(no5)': [0, 3, 10, 1],
+  "m7b9(no5)": [0, 3, 10, 1],
   min7: [0, 3, 7, 10],
-  '-7': [0, 3, 7, 10],
+  "-7": [0, 3, 7, 10],
   dim7: [0, 3, 6, 9],
-  '°7': [0, 3, 6, 9],
+  "°7": [0, 3, 6, 9],
   m7b5: [0, 3, 6, 10],
   ø: [0, 3, 6, 10],
-  'm(maj7)': [0, 3, 7, 11],
-  'm(maj7)(no5)': [0, 3, 11],
+  "m(maj7)": [0, 3, 7, 11],
+  "m(maj7)(no5)": [0, 3, 11],
   mM7: [0, 3, 7, 11],
   aug7: [0, 4, 8, 10],
-  '7#5': [0, 4, 8, 10],
-  '+7': [0, 4, 8, 10],
-  'maj7#5': [0, 4, 8, 11],
-  'M7#5': [0, 4, 8, 11],
+  "7#5": [0, 4, 8, 10],
+  "+7": [0, 4, 8, 10],
+  "maj7#5": [0, 4, 8, 11],
+  "M7#5": [0, 4, 8, 11],
   maj7b5: [0, 4, 6, 11],
 
   6: [0, 4, 7, 9],
-  '6(no5)': [0, 4, 9],
+  "6(no5)": [0, 4, 9],
   m6: [0, 3, 7, 9],
-  'm6(no5)': [0, 3, 9],
-  '-6': [0, 3, 7, 9],
+  "m6(no5)": [0, 3, 9],
+  "-6": [0, 3, 7, 9],
 
   sus2: [0, 2, 7],
   sus4: [0, 5, 7],
   add9: [0, 4, 7, 2], // 14 % 12 = 2
-  'add9(no5)': [0, 4, 2],
+  "add9(no5)": [0, 4, 2],
   add2: [0, 4, 7, 2], // 14 % 12 = 2
-  'm(add9)': [0, 3, 7, 2], // 14 % 12 = 2
-  'm(add9)(no5)': [0, 3, 2], // 14 % 12 = 2
-  'm(add9)b5': [0, 3, 6, 2], // 14 % 12 = 2
-  'm(add11)(no5)': [0, 3, 5], // 17 % 12 = 5
+  "m(add9)": [0, 3, 7, 2], // 14 % 12 = 2
+  "m(add9)(no5)": [0, 3, 2], // 14 % 12 = 2
+  "m(add9)b5": [0, 3, 6, 2], // 14 % 12 = 2
+  "m(add11)(no5)": [0, 3, 5], // 17 % 12 = 5
   add11: [0, 4, 7, 5], // 17 % 12 = 5
-  'add11(no5)': [0, 4, 5],
+  "add11(no5)": [0, 4, 5],
   add4: [0, 4, 7, 5], // 17 % 12 = 5
-  '6/9': [0, 4, 7, 9, 2], // 14 % 12 = 2
-  '6/9(no5)': [0, 4, 9, 2],
-  'm(6/9)': [0, 3, 7, 9, 2], // 14 % 12 = 2
-  'm(6/9)(no5)': [0, 3, 9, 2],
-  '7sus2': [0, 2, 7, 10],
-  '7sus4': [0, 5, 7, 10],
-  '9sus4': [0, 5, 7, 10, 2], // 14 % 12 = 2
+  "6/9": [0, 4, 7, 9, 2], // 14 % 12 = 2
+  "6/9(no5)": [0, 4, 9, 2],
+  "m(6/9)": [0, 3, 7, 9, 2], // 14 % 12 = 2
+  "m(6/9)(no5)": [0, 3, 9, 2],
+  "7sus2": [0, 2, 7, 10],
+  "7sus4": [0, 5, 7, 10],
+  "9sus4": [0, 5, 7, 10, 2], // 14 % 12 = 2
 
   9: [0, 4, 7, 10, 2], // 14 % 12 = 2
-  '9(no5)': [0, 4, 10, 2],
+  "9(no5)": [0, 4, 10, 2],
   maj9: [0, 4, 7, 11, 2], // 14 % 12 = 2
-  'maj9(no5)': [0, 4, 11, 2], // 14 % 12 = 2
+  "maj9(no5)": [0, 4, 11, 2], // 14 % 12 = 2
   M9: [0, 4, 7, 11, 2], // 14 % 12 = 2
   m9: [0, 3, 7, 10, 2], // 14 % 12 = 2
-  'm9(no5)': [0, 3, 10, 2],
-  '-9': [0, 3, 7, 10, 2], // 14 % 12 = 2
+  "m9(no5)": [0, 3, 10, 2],
+  "-9": [0, 3, 7, 10, 2], // 14 % 12 = 2
   11: [0, 4, 7, 10, 2, 5], // 14%12=2, 17%12=5
-  '11(no5)': [0, 4, 10, 2, 5],
-  '11(no3)': [0, 7, 10, 2, 5],
+  "11(no5)": [0, 4, 10, 2, 5],
+  "11(no3)": [0, 7, 10, 2, 5],
   maj11: [0, 4, 7, 11, 2, 5],
-  'maj11(no5)': [0, 4, 11, 2, 5],
-  'maj11(no5,no9)': [0, 4, 5, 11],
+  "maj11(no5)": [0, 4, 11, 2, 5],
+  "maj11(no5,no9)": [0, 4, 5, 11],
   m11: [0, 3, 7, 10, 2, 5],
-  'm11(no5)': [0, 3, 10, 2, 5],
-  '-11': [0, 3, 7, 10, 2, 5],
+  "m11(no5)": [0, 3, 10, 2, 5],
+  "-11": [0, 3, 7, 10, 2, 5],
   13: [0, 4, 7, 10, 2, 9], // 14%12=2, 21%12=9
-  '13(no5)': [0, 4, 10, 2, 9],
+  "13(no5)": [0, 4, 10, 2, 9],
   maj13: [0, 4, 7, 11, 2, 9],
-  'maj13(no5)': [0, 4, 11, 2, 9],
+  "maj13(no5)": [0, 4, 11, 2, 9],
   m13: [0, 3, 7, 10, 2, 9],
-  'm13(no5)': [0, 3, 10, 2, 9],
-  '-13': [0, 3, 7, 10, 2, 9],
+  "m13(no5)": [0, 3, 10, 2, 9],
+  "-13": [0, 3, 7, 10, 2, 9],
 
-  '7b5': [0, 4, 6, 10],
-  '7b9': [0, 4, 7, 10, 1], // 13 % 12 = 1
-  '7b9(no5)': [0, 4, 10, 1],
-  '7#9': [0, 4, 7, 10, 3], // 15 % 12 = 3
-  '7#9(no5)': [0, 4, 10, 3],
-  '7(maj7)': [0, 4, 7, 10, 11],
-  '7#11': [0, 4, 7, 10, 6], // 18 % 12 = 6
-  '7#11(no5)': [0, 4, 10, 6],
-  '7alt': [0, 4, 10, 1, 6], // 13%12=1, 18%12=6
-  '7b13': [0, 4, 7, 10, 8], // 20 % 12 = 8
-  '7b13(no5)': [0, 4, 10, 8],
-  '9b5': [0, 4, 6, 10, 2], // 14 % 12 = 2
-  '9#5': [0, 4, 8, 10, 2], // 14 % 12 = 2
-  '7b9b5': [0, 4, 6, 10, 1],
-  '7b9#5': [0, 4, 8, 10, 1],
-  '7#9b5': [0, 4, 6, 10, 3],
-  '7#9#5': [0, 4, 8, 10, 3],
+  "7b5": [0, 4, 6, 10],
+  "7b9": [0, 4, 7, 10, 1], // 13 % 12 = 1
+  "7b9(no5)": [0, 4, 10, 1],
+  "7#9": [0, 4, 7, 10, 3], // 15 % 12 = 3
+  "7#9(no5)": [0, 4, 10, 3],
+  "7#11": [0, 4, 7, 10, 6], // 18 % 12 = 6
+  "7#11(no5)": [0, 4, 10, 6],
+  "7alt": [0, 4, 10, 1, 6], // 13%12=1, 18%12=6
+  "7b13": [0, 4, 7, 10, 8], // 20 % 12 = 8
+  "7b13(no5)": [0, 4, 10, 8],
+  "9b5": [0, 4, 6, 10, 2], // 14 % 12 = 2
+  "9#5": [0, 4, 8, 10, 2], // 14 % 12 = 2
+  "7b9b5": [0, 4, 6, 10, 1],
+  "7b9#5": [0, 4, 8, 10, 1],
+  "7#9b5": [0, 4, 6, 10, 3],
+  "7#9#5": [0, 4, 8, 10, 3],
   alt7: [0, 4, 10, 1, 6], // 13%12=1, 18%12=6
 
   quartal: [0, 5, 10],
   split3: [0, 3, 4, 7],
-  mu: [0, 4, 2] // 14 % 12 = 2
-}
+  mu: [0, 4, 2], // 14 % 12 = 2
+};
 
 export const defaultProgression = [
   {
     id: 1,
-    root: 'A',
-    quality: 'm7',
+    root: "A",
+    quality: "m7",
     inversion: 0,
     duration: 2,
-    notes: ['A2', 'C4', 'E4', 'G4']
+    notes: ["A2", "C4", "E4", "G4"],
   },
   {
     id: 2,
-    root: 'G',
-    quality: '',
+    root: "G",
+    quality: "",
     inversion: 1,
     duration: 2,
-    notes: ['B2', 'D4', 'G4']
+    notes: ["B2", "D4", "G4"],
   },
   {
     id: 3,
-    root: 'C',
-    quality: '',
+    root: "C",
+    quality: "",
     inversion: 0,
     duration: 2,
-    notes: ['C3', 'G3', 'E4', 'G4']
+    notes: ["C3", "G3", "E4", "G4"],
   },
   {
     id: 4,
-    root: 'F',
-    quality: 'maj7',
+    root: "F",
+    quality: "maj7",
     inversion: 0,
     duration: 2,
-    notes: ['F2', 'A3', 'C4', 'E4']
+    notes: ["F2", "A3", "C4", "E4"],
   },
   {
     id: 5,
-    root: 'D',
-    quality: 'm7',
+    root: "D",
+    quality: "m7",
     inversion: 0,
     duration: 2,
-    notes: ['D2', 'F3', 'A3', 'C4']
+    notes: ["D2", "F3", "A3", "C4"],
   },
   {
     id: 6,
-    root: 'E',
-    quality: 'sus4',
+    root: "E",
+    quality: "sus4",
     inversion: 0,
     duration: 1,
-    notes: ['E2', 'A3', 'B3']
+    notes: ["E2", "A3", "B3"],
   },
   {
     id: 7,
-    root: 'E',
-    quality: '7',
+    root: "E",
+    quality: "7",
     inversion: 0,
     duration: 1,
-    notes: ['G#2', 'G#3', 'B3', 'D4']
+    notes: ["G#2", "G#3", "B3", "D4"],
   },
   {
     id: 9,
-    root: 'A',
-    quality: '9',
+    root: "A",
+    quality: "9",
     inversion: 0,
     duration: 2,
-    notes: ['A2', 'G3', 'B3', 'C#4', 'E4']
+    notes: ["A2", "G3", "B3", "C#4", "E4"],
   },
   {
     id: 10,
-    root: 'D',
-    quality: '7',
+    root: "D",
+    quality: "7",
     inversion: 0,
     duration: 2,
-    notes: ['D2', 'D4', 'F#4', 'A4', 'C4']
+    notes: ["D2", "D4", "F#4", "A4", "C4"],
   },
   {
     id: 11,
-    root: 'G',
-    quality: '',
+    root: "G",
+    quality: "",
     inversion: 0,
     duration: 4,
-    notes: ['G2', 'B3', 'D4', 'G4']
-  }
-]
+    notes: ["G2", "B3", "D4", "G4"],
+  },
+];

@@ -1,7 +1,7 @@
 {
-    "navigation": {
-        "analyze_view": "Analyzer",
-        "harmonize_view": "Harmonizer",
-        "explore_view": "Explorer"
-    }
+  "navigation": {
+    "analyze_view": "Analyzer",
+    "harmonize_view": "Harmonizer",
+    "explore_view": "Explorer"
+  }
 }

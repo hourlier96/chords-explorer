@@ -1,5 +1,10 @@
 <template>
-  <v-card :title="props.title" :width="props.width" :prepend-icon="props.icon" class="mx-auto ma-4">
+  <v-card
+    :title="props.title"
+    :width="props.width"
+    :prepend-icon="props.icon"
+    class="mx-auto ma-4"
+  >
     <slot name="header" />
     <v-divider />
     <v-card-text class="pa-4">
@@ -16,17 +21,17 @@
 const props = defineProps({
   title: {
     type: String,
-    default: 'Cool title'
+    default: "Cool title",
   },
   width: {
     type: Number,
-    default: 400
+    default: 400,
   },
   icon: {
     type: String,
-    default: null
-  }
-})
+    default: null,
+  },
+});
 </script>
 
 <style>

@@ -2,11 +2,8 @@ import re
 from typing import Any, Dict, List, Optional
 
 from app.utils.chords_analyzer import QualityAnalysisItem
-from app.utils.common import (
-    get_diatonic_7th_chord,
-    get_note_from_index,
-)
-from constants import MODES_DATA, ROMAN_DEGREES, ROMAN_TO_DEGREE_MAP
+from app.utils.common import get_diatonic_7th_chord, get_note_from_index
+from constants import MODE_SPECIFIC_NUMERALS, MODES_DATA, ROMAN_TO_DEGREE_MAP
 
 TRIAD_QUALITIES = {"", "m", "dim", "aug", "sus2", "sus4"}
 
@@ -42,6 +39,7 @@ def get_diatonic_triad_chord(degree: int, tonic_index: int, mode_name: str) -> s
 
     Returns:
         str: Le nom complet de l'accord de triade (ex: "Dm", "G", "Bdim").
+
     """
     if mode_name not in MODES_DATA:
         raise ValueError(f"Le mode '{mode_name}' n'est pas reconnu.")
@@ -127,13 +125,7 @@ def get_substitutions(
 
     for index, info in enumerate(sub_info):
         if info is None:
-            substituted_chords.append(
-                {
-                    "chord": progression[index],
-                    "roman": None,
-                    "quality": None,
-                }
-            )
+            substituted_chords.append({"chord": progression[index], "roman": None, "quality": None})
             continue
 
         degree = info["degree"]
@@ -153,18 +145,10 @@ def get_substitutions(
             chord_name = get_diatonic_7th_chord(degree, relative_tonic_index, mode_name)
 
         # Formatage du chiffrage romain
-        roman_numeral = ROMAN_DEGREES[degree - 1]
-        if (
-            expected_quality.startswith("m") and not expected_quality.startswith("maj")
-        ) or "dim" in expected_quality:
-            roman_numeral = roman_numeral.lower()
+        roman_numeral = MODE_SPECIFIC_NUMERALS.get(mode_name, [])[degree - 1]
 
         substituted_chords.append(
-            {
-                "chord": chord_name,
-                "roman": roman_numeral,
-                "quality": expected_quality,
-            }
+            {"chord": chord_name, "roman": roman_numeral, "quality": expected_quality}
         )
 
     return substituted_chords

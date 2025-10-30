@@ -6,7 +6,7 @@ from app.utils.common import (
     get_scale_notes,
     parse_chord,
 )
-from constants import CORE_QUALITIES, MODES_DATA, ROMAN_DEGREES
+from constants import CORE_QUALITIES, MODE_SPECIFIC_NUMERALS, MODES_DATA
 
 
 def is_chord_diatonic(chord_name, tonic_name, mode_name):
@@ -38,7 +38,7 @@ def get_roman_numeral(chord_name, tonic_index, mode_name):
     if not parsed_chord:
         return (f"({chord_name})", f"({chord_name})")
 
-    chord_index, found_quality = parsed_chord
+    chord_index, found_quality, _ = parsed_chord
     interval = (chord_index - tonic_index + 12) % 12
 
     mode_intervals, mode_qualities, _ = MODES_DATA[mode_name]
@@ -47,7 +47,7 @@ def get_roman_numeral(chord_name, tonic_index, mode_name):
         return (f"({chord_name})", f"({chord_name})")
 
     degree_index = mode_intervals.index(interval)
-    base_numeral = ROMAN_DEGREES[degree_index]
+    base_numeral = MODE_SPECIFIC_NUMERALS.get(mode_name, [])[degree_index]
     expected_quality = mode_qualities[degree_index]
 
     expected_numeral = format_numeral(base_numeral, expected_quality)
@@ -73,7 +73,7 @@ def get_secondary_dominant_for_target(target_chord_name, tonic_name, mode_name):
     if not parsed_target:
         return "N/A", "Accord non reconnu"
 
-    target_root_index, target_quality = parsed_target
+    target_root_index, target_quality, _ = parsed_target
 
     # On ne crée généralement pas de dominante pour une cible diminuée.
     if CORE_QUALITIES.get(target_quality) == "diminished":

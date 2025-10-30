@@ -32,7 +32,32 @@ NOTE_INDEX_MAP = {
     "Cb": 11,
 }
 
-ROMAN_DEGREES = ["I", "II", "III", "IV", "V", "VI", "VII"]
+MODE_SPECIFIC_NUMERALS = {
+    # --- Modes de la Gamme Majeure ---
+    "Ionian": ["I", "ii", "iii", "IV", "V", "vi", "vii°"],
+    "Dorian": ["i", "ii", "III", "IV", "v", "vi°", "VII"],
+    "Phrygian": ["i", "II", "III", "iv", "v°", "VI", "vii"],
+    "Lydian": ["I", "II", "iii", "iv°", "V", "vi", "vii"],
+    "Mixolydian": ["I", "ii", "iii°", "IV", "v", "vi", "VII"],
+    "Aeolian": ["i", "ii°", "III", "iv", "v", "VI", "VII"],
+    "Locrian": ["i°", "II", "iii", "iv", "V", "VI", "vii"],
+    # --- Modes de la Gamme Mineure Harmonique ---
+    "Harmonic Minor": ["i", "ii°", "III+", "iv", "V", "VI", "vii°"],
+    "Locrian ♮6": ["i°", "II+", "iii", "iv", "V", "vi°", "vii"],
+    "Ionian #5": ["I+", "ii", "iii", "IV", "v°", "vi", "vii°"],
+    "Dorian #4": ["i", "ii", "III", "iv°", "V", "VI", "vii"],
+    "Phrygian Dominant": ["I", "II", "iii°", "iv", "v", "VI", "vii"],
+    "Lydian #2": ["i", "ii°", "III+", "IV+", "V", "vi", "vii"],
+    "Super Locrian bb7": ["i°", "II", "iii", "iv+", "V", "VI", "vii"],
+    # --- Modes de la Gamme Mineure Mélodique ---
+    "Melodic Minor": ["i", "ii", "III+", "IV", "V", "vi°", "vii°"],
+    "Dorian b2": ["i", "II+", "III", "IV", "v°", "vi°", "vii"],
+    "Lydian #5": ["I+", "II", "III", "iv°", "v°", "vi", "vii"],
+    "Lydian Dominant": ["I", "II", "iii", "iv°", "v", "vi", "vii"],
+    "Mixolydian b6": ["I", "ii°", "iii", "iv", "v", "VI", "VII"],
+    "Locrian ♮2": ["i°", "ii", "III", "IV", "v", "VI", "vii"],
+    "Altered Scale": ["i°", "II", "III", "IV+", "V+", "vi", "vii"],
+}
 
 CHROMATIC_DEGREES_MAP = {
     0: "I",
@@ -163,41 +188,13 @@ CORE_QUALITIES = {
 
 MODES_DATA: Dict[str, Tuple[List[int], List[str], Optional[int]]] = {}
 MAJOR_MODES_DATA = {
-    "Ionian": (
-        [0, 2, 4, 5, 7, 9, 11],
-        ["maj7", "m7", "m7", "maj7", "7", "m7", "m7b5"],
-        0,
-    ),
-    "Dorian": (
-        [0, 2, 3, 5, 7, 9, 10],
-        ["m7", "m7", "maj7", "7", "m7", "m7b5", "maj7"],
-        -2,
-    ),
-    "Phrygian": (
-        [0, 1, 3, 5, 7, 8, 10],
-        ["m7", "maj7", "7", "m7", "m7b5", "maj7", "m7"],
-        -4,
-    ),
-    "Lydian": (
-        [0, 2, 4, 6, 7, 9, 11],
-        ["maj7", "7", "m7", "m7b5", "maj7", "m7", "m7"],
-        -5,
-    ),
-    "Mixolydian": (
-        [0, 2, 4, 5, 7, 9, 10],
-        ["7", "m7", "m7b5", "maj7", "m7", "m7", "maj7"],
-        -7,
-    ),
-    "Aeolian": (
-        [0, 2, 3, 5, 7, 8, 10],
-        ["m7", "m7b5", "maj7", "m7", "m7", "maj7", "7"],
-        -9,
-    ),
-    "Locrian": (
-        [0, 1, 3, 5, 6, 8, 10],
-        ["m7b5", "maj7", "m7", "m7", "maj7", "7", "m7"],
-        -11,
-    ),
+    "Ionian": ([0, 2, 4, 5, 7, 9, 11], ["maj7", "m7", "m7", "maj7", "7", "m7", "m7b5"], 0),
+    "Dorian": ([0, 2, 3, 5, 7, 9, 10], ["m7", "m7", "maj7", "7", "m7", "m7b5", "maj7"], -2),
+    "Phrygian": ([0, 1, 3, 5, 7, 8, 10], ["m7", "maj7", "7", "m7", "m7b5", "maj7", "m7"], -4),
+    "Lydian": ([0, 2, 4, 6, 7, 9, 11], ["maj7", "7", "m7", "m7b5", "maj7", "m7", "m7"], -5),
+    "Mixolydian": ([0, 2, 4, 5, 7, 9, 10], ["7", "m7", "m7b5", "maj7", "m7", "m7", "maj7"], -7),
+    "Aeolian": ([0, 2, 3, 5, 7, 8, 10], ["m7", "m7b5", "maj7", "m7", "m7", "maj7", "7"], -9),
+    "Locrian": ([0, 1, 3, 5, 6, 8, 10], ["m7b5", "maj7", "m7", "m7", "maj7", "7", "m7"], -11),
 }
 
 # --- Modes de la gamme mineure harmonique ---

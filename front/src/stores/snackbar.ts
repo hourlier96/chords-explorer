@@ -1,17 +1,17 @@
-import { defineStore } from 'pinia'
-import { Anchor } from '@/types/vuetify-types.ts'
+import { defineStore } from "pinia";
+import { Anchor } from "@/types/vuetify-types.ts";
 
-const DEFAULT_TIMEOUT = 3000
+const DEFAULT_TIMEOUT = 3000;
 
-export const snackStore = defineStore('snackbar', {
+export const snackStore = defineStore("snackbar", {
   state: () => ({
     displayed: false,
     text: null,
     type: null,
     timeout: DEFAULT_TIMEOUT,
-    location: 'bottom' as Anchor,
+    location: "bottom" as Anchor,
     icon: null,
-    closable: true
+    closable: true,
   }),
 
   actions: {
@@ -19,33 +19,33 @@ export const snackStore = defineStore('snackbar', {
       text,
       type,
       timeout = DEFAULT_TIMEOUT,
-      location = 'bottom',
+      location = "bottom",
       closable = true,
-      icon = null
+      icon = null,
     }) {
       if (this.displayed) {
         // Hack to reset the timer when the snackbar is already displayed
         setTimeout(() => {
-          this.timeout = 0
+          this.timeout = 0;
           this.display({
             text,
             type,
             timeout,
             location,
             closable,
-            icon
-          })
-        }, 0)
+            icon,
+          });
+        }, 0);
       } else {
-        this.text = text
-        this.type = type
-        this.timeout = timeout
-        this.location = location
-        this.closable = closable
-        this.displayed = true
-        this.icon = icon
+        this.text = text;
+        this.type = type;
+        this.timeout = timeout;
+        this.location = location;
+        this.closable = closable;
+        this.displayed = true;
+        this.icon = icon;
       }
-    }
+    },
   },
-  persist: true
-})
+  persist: true,
+});

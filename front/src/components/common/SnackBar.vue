@@ -11,12 +11,18 @@
       {{ sStore.text }}
     </div>
     <template #actions>
-      <v-btn v-if="sStore.closable" variant="text" @click="sStore.displayed = false"> Close </v-btn>
+      <v-btn
+        v-if="sStore.closable"
+        variant="text"
+        @click="sStore.displayed = false"
+      >
+        Close
+      </v-btn>
     </template>
   </v-snackbar>
 </template>
 
 <script setup lang="ts">
-import { snackStore } from '@/stores/snackbar.ts'
-const sStore = snackStore()
+import { snackStore } from "@/stores/snackbar.ts";
+const sStore = snackStore();
 </script>

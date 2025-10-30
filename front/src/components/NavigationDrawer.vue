@@ -38,21 +38,21 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from "vue";
 
-let drawer = ref(true)
-let rail = ref(true)
+let drawer = ref(true);
+let rail = ref(true);
 
-const emit = defineEmits(['expand'])
+const emit = defineEmits(["expand"]);
 
 onMounted(() => {
   nextTick(() => {
-    expandRail(true)
-  })
-})
+    expandRail(true);
+  });
+});
 
 function expandRail(expand) {
-  rail.value = expand
-  emit('expand', expand)
+  rail.value = expand;
+  emit("expand", expand);
 }
 </script>

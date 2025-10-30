@@ -4,55 +4,55 @@
       {{ chordDisplayName }}
     </button>
     <button class="remove-button" @click="$emit('remove')">×</button>
-    <div class="resize-handle" @mousedown.prevent="startResize"></div>
+    <div class="resize-handle" @mousedown.prevent="startResize" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
-  beatWidth: { type: Number, required: true }
-})
+  beatWidth: { type: Number, required: true },
+});
 
-const emit = defineEmits(['update:modelValue', 'remove', 'start-editing'])
+const emit = defineEmits(["update:modelValue", "remove", "start-editing"]);
 
 const chordDisplayName = computed(() => {
-  return `${props.modelValue.root}${props.modelValue.quality}`
-})
+  return `${props.modelValue.root}${props.modelValue.quality}`;
+});
 
 const cardWidth = computed(() => {
-  const duration = props.modelValue.duration || 4
-  return `${duration * props.beatWidth}px`
-})
+  const duration = props.modelValue.duration || 4;
+  return `${duration * props.beatWidth}px`;
+});
 
-const initialMouseX = ref(0)
-const initialDuration = ref(0)
+const initialMouseX = ref(0);
+const initialDuration = ref(0);
 
 function startResize(event) {
-  initialMouseX.value = event.clientX
-  initialDuration.value = props.modelValue.duration || 4
-  window.addEventListener('mousemove', doResize)
-  window.addEventListener('mouseup', stopResize)
+  initialMouseX.value = event.clientX;
+  initialDuration.value = props.modelValue.duration || 4;
+  window.addEventListener("mousemove", doResize);
+  window.addEventListener("mouseup", stopResize);
 }
 
 function doResize(event) {
-  const deltaX = event.clientX - initialMouseX.value
-  const durationChange = Math.round(deltaX / props.beatWidth)
-  let newDuration = initialDuration.value + durationChange
-  newDuration = Math.max(1, newDuration)
+  const deltaX = event.clientX - initialMouseX.value;
+  const durationChange = Math.round(deltaX / props.beatWidth);
+  let newDuration = initialDuration.value + durationChange;
+  newDuration = Math.max(1, newDuration);
   if (newDuration !== props.modelValue.duration) {
-    emit('update:modelValue', {
+    emit("update:modelValue", {
       ...props.modelValue,
-      duration: newDuration
-    })
+      duration: newDuration,
+    });
   }
 }
 
 function stopResize() {
-  window.removeEventListener('mousemove', doResize)
-  window.removeEventListener('mouseup', stopResize)
+  window.removeEventListener("mousemove", doResize);
+  window.removeEventListener("mouseup", stopResize);
 }
 </script>
 

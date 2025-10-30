@@ -27,27 +27,32 @@
 
     <v-tooltip
       location="top"
-      :text="isMetronomeActive ? 'Désactiver le métronome' : 'Activer le métronome'"
+      :text="
+        isMetronomeActive ? 'Désactiver le métronome' : 'Activer le métronome'
+      "
     >
       <template #activator="{ props: tooltipProps }">
         <button
           v-bind="tooltipProps"
-          @click="isMetronomeActive = !isMetronomeActive"
           class="control-icon-button"
           :class="{ 'is-active': isMetronomeActive }"
+          @click="isMetronomeActive = !isMetronomeActive"
         >
           <v-icon icon="mdi-metronome" />
         </button>
       </template>
     </v-tooltip>
 
-    <v-tooltip location="top" :text="isLooping ? 'Désactiver la loop' : 'Activer la loop'">
+    <v-tooltip
+      location="top"
+      :text="isLooping ? 'Désactiver la loop' : 'Activer la loop'"
+    >
       <template #activator="{ props: tooltipProps }">
         <button
           v-bind="tooltipProps"
-          @click="isLooping = !isLooping"
           class="control-icon-button"
           :class="{ 'is-active': isLooping }"
+          @click="isLooping = !isLooping"
         >
           <v-icon icon="mdi-sync" />
         </button>
@@ -59,9 +64,9 @@
         <template #activator="{ props: tooltipProps }">
           <button
             v-bind="tooltipProps"
-            @click="$emit('play')"
             class="control-icon-button"
             :disabled="isPlaying || isTrackEmpty"
+            @click="$emit('play')"
           >
             <v-icon icon="mdi-play" />
           </button>
@@ -71,9 +76,9 @@
         <template #activator="{ props: tooltipProps }">
           <button
             v-bind="tooltipProps"
-            @click="$emit('stop')"
             class="control-icon-button"
             :disabled="!isPlaying"
+            @click="$emit('stop')"
           >
             <v-icon icon="mdi-stop" />
           </button>
@@ -84,18 +89,24 @@
 </template>
 
 <script setup>
-import TempoControl from '@/components/common/TempoControl.vue'
+import TempoControl from "@/components/common/TempoControl.vue";
 
 defineProps({
   isPlaying: { type: Boolean, required: true },
-  isTrackEmpty: { type: Boolean, required: true }
-})
+  isTrackEmpty: { type: Boolean, required: true },
+});
 
-defineEmits(['play', 'stop'])
+defineEmits(["play", "stop"]);
 
-const timeSignature = defineModel('timeSignature', { required: true })
-const isMetronomeActive = defineModel('isMetronomeActive', { required: true })
-const isLooping = defineModel('isLooping', { required: true })
+const timeSignature = defineModel("timeSignature", {
+  required: true,
+  type: String,
+});
+const isMetronomeActive = defineModel("isMetronomeActive", {
+  required: true,
+  type: Boolean,
+});
+const isLooping = defineModel("isLooping", { required: true, type: Boolean });
 </script>
 
 <style scoped>
@@ -158,7 +169,7 @@ const isLooping = defineModel('isLooping', { required: true })
 .radio-label-sm:not(.active):hover {
   background-color: #3f3f3f;
 }
-.radio-label-sm input[type='radio'] {
+.radio-label-sm input[type="radio"] {
   display: none;
 }
 </style>

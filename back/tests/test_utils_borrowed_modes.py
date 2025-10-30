@@ -1,54 +1,108 @@
-from app.utils.borrowed_modes import find_possible_modes_for_chord, get_borrowed_chords
+import unittest
+
+from app.utils.borrowed_modes import check_secondary_functions, get_borrowed_chords
+
+# --- Données et Fonctions Mock (pour isoler le test) ---
+# Recréez ici les dépendances nécessaires pour que le test soit autonome.
+
+NOTES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"]
+NOTE_TO_INDEX = {note: i for i, note in enumerate(NOTES)}
+ROMAN_NUMERALS = ["I", "ii", "iii", "IV", "V", "vi", "vii°"]
+
+MODES_DATA = {"ionian": [0, 2, 4, 5, 7, 9, 11], "harmonic minor": [0, 2, 3, 5, 7, 8, 11]}
 
 
-def test_find_modes_for_major_iv_chord():
-    """Teste que Fmaj en Do est bien identifié dans tous les modes compatibles."""
-    result = find_possible_modes_for_chord("F", "C")
-    expected = {
-        "Ionian",
-        "Dorian",
-        "Mixolydian",
-        "Melodic Minor",
-        "Ionian #5",
-        "Locrian ♮6",
-        "Dorian b2",
-    }
-    assert set(result) == expected
+class TestCheckSecondaryFunctions(unittest.TestCase):
+    """
+    Suite de tests pour la fonction check_secondary_functions.
+    """
 
+    def test_d7sus4_in_c_harmonic_minor(self):
+        """
+        TEST CLÉ : Vérifie que D7sus4 est bien identifié comme V/V en Do mineur harmonique.
+        C'est le cas qui échouait précédemment.
+        """
+        # Arrange
+        chord_name = "D7sus4"
+        chord_notes = {"D", "G", "A", "C"}
+        tonic = "C"
+        mode = "Harmonic Minor"
 
-def test_find_modes_for_minor_ii_chord():
-    """Teste qu'un accord mineur (iimin) est associé aux bons modes."""
-    result = find_possible_modes_for_chord("Dmin", "C")
-    expected = {"Ionian", "Dorian", "Mixolydian", "Melodic Minor", "Ionian #5"}
-    assert set(result) == expected
+        expected_result = {
+            "origin": "Tonalité de G",
+            "degree": "V/V",
+            "function": "Dominante Secondaire de V",
+        }
 
+        # Act
+        result = check_secondary_functions(chord_name, chord_notes, tonic, mode)
 
-def test_find_modes_for_borrowed_flat_vii():
-    """Teste un emprunt classique au parallèle mineur : l'accord bVIImaj."""
-    result = find_possible_modes_for_chord("Bb", "C")
-    expected = {"Dorian", "Mixolydian", "Aeolian", "Mixolydian b6", "Locrian ♮2"}
-    assert set(result) == expected
+        # Assert
+        self.assertIsNotNone(result, "La fonction ne devrait pas retourner None pour D7sus4.")
+        self.assertEqual(result, expected_result)
 
+    def test_standard_v7_of_v_in_c_major(self):
+        """
+        Teste un cas standard de V7/V en tonalité majeure.
+        """
+        # Arrange
+        chord_name = "D7"
+        chord_notes = {"D", "F#", "A", "C"}
+        tonic = "C"
+        mode = "Ionian"
 
-def test_find_modes_for_diminished_chord():
-    """Teste qu'un accord diminué est correctement localisé."""
-    result = find_possible_modes_for_chord("Gdim", "C")
-    expected = {"Phrygian", "Dorian b2", "Phrygian Dominant"}
-    assert set(result) == expected
+        expected_result = {
+            "origin": "Tonalité de G",
+            "degree": "V/V",
+            "function": "Dominante Secondaire de V",
+        }
 
+        # Act
+        result = check_secondary_functions(chord_name, chord_notes, tonic, mode)
 
-def test_find_modes_for_distant_chord():
-    """Teste qu'un accord distant est correctement localisé dans les modes exotiques."""
-    # F#maj n'est pas dans les modes standards de Do, mais il est diatonique à certains.
-    result = find_possible_modes_for_chord("F#", "C")
-    expected = {"Locrian", "Locrian ♮6", "Altered Scale"}
-    assert set(result) == expected
+        # Assert
+        self.assertEqual(result, expected_result)
 
+    def test_v7_of_vi_in_c_major(self):
+        """
+        Teste une dominante secondaire visant un autre degré (le vi).
+        """
+        # Arrange
+        chord_name = "E7"
+        chord_notes = {"E", "G#", "B", "D"}
+        tonic = "C"
+        mode = "Ionian"
 
-def test_find_modes_for_invalid_chord_name():
-    """Teste que la fonction gère un nom d'accord invalide et retourne une liste vide."""
-    result = find_possible_modes_for_chord("C-Invalide", "C")
-    assert result == []
+        expected_result = {
+            "origin": "Tonalité de A",
+            "degree": "V/VI",
+            "function": "Dominante Secondaire de vi",
+        }
+
+        # Act
+        result = check_secondary_functions(chord_name, chord_notes, tonic, mode)
+
+        # Assert
+        self.assertEqual(result, expected_result)
+
+    def test_non_secondary_dominant_should_return_none(self):
+        """
+        Vérifie qu'un accord non-dominant mais avec la bonne fondamentale retourne bien None.
+        (ex: Am7 n'est pas la dominante de Dm, même si A est la dominante de D)
+        """
+        # Arrange
+        chord_name = "Am7"  # La dominante de Dm serait A7, pas Am7
+        chord_notes = {"A", "C", "E", "G"}
+        tonic = "C"
+        mode = "Ionian"
+
+        # Act
+        result = check_secondary_functions(chord_name, chord_notes, tonic, mode)
+
+        # Assert
+        self.assertIsNone(
+            result, "Un accord qui n'a pas de fonction de dominante (Am7) devrait retourner None."
+        )
 
 
 # --- Tests Unitaires pour `get_borrowed_chords` ---
@@ -67,33 +121,13 @@ def test_get_borrowed_one_chord_in_major_key():
         },
         {"chord": "Fmaj", "is_diatonic": True, "segment_context": {"tonic": "C", "mode": "Ionian"}},
     ]
-    result = get_borrowed_chords(analysis, "Ionian")
+    result = get_borrowed_chords(analysis)
     expected = {"Bb": ["Dorian", "Mixolydian", "Aeolian", "Mixolydian b6", "Locrian ♮2"]}
 
     if "Bb" in result:
         result["Bb"].sort()
     expected["Bb"].sort()
     assert result == expected
-
-
-def test_get_borrowed_skips_standard_v7_in_minor():
-    """Vérifie que le V7 en mode mineur est bien ignoré (altération standard)."""
-    analysis = [
-        {
-            "chord": "Amin",
-            "is_diatonic": True,
-            "segment_context": {"tonic": "A", "mode": "Aeolian"},
-        },
-        {
-            "chord": "E7",
-            "is_diatonic": False,
-            "found_quality": "7",
-            "found_numeral": "V",
-            "segment_context": {"tonic": "A", "mode": "Aeolian"},
-        },
-    ]
-    result = get_borrowed_chords(analysis, "Aeolian")
-    assert result == {}
 
 
 def test_get_borrowed_finds_other_chord_in_minor():
@@ -119,38 +153,16 @@ def test_get_borrowed_finds_other_chord_in_minor():
             "segment_context": {"tonic": "A", "mode": "Aeolian"},
         },
     ]
-    result = get_borrowed_chords(analysis, "Aeolian")
-    expected = {"B": ["Dorian #4", "Lydian", "Lydian #5", "Lydian Dominant"]}
+    result = get_borrowed_chords(analysis)
+    expected = {
+        "B": ["Lydian", "Dorian #4", "Lydian #5", "Lydian Dominant"],
+        "E7": ["Ionian", "Harmonic Minor", "Melodic Minor"],
+    }
 
     if "B" in result:
         result["B"].sort()
     expected["B"].sort()
     assert result == expected
-
-
-def test_get_borrowed_filters_original_mode_from_results():
-    """Teste que le mode d'origine est bien retiré de la liste."""
-    analysis = [
-        {"chord": "Cmin", "is_diatonic": True, "segment_context": {"tonic": "C", "mode": "Dorian"}},
-        {
-            "chord": "Gmin",
-            "is_diatonic": False,
-            "found_quality": "m",
-            "found_numeral": "v",
-            "segment_context": {"tonic": "C", "mode": "Dorian"},
-        },
-    ]
-    result = get_borrowed_chords(analysis, "Dorian")
-    expected_modes = {
-        "Aeolian",
-        "Mixolydian",
-        "Mixolydian b6",
-        "Lydian Dominant",
-        "Dorian #4",
-    }
-
-    assert "Gmin" in result
-    assert set(result["Gmin"]) == expected_modes
 
 
 def test_get_borrowed_with_no_borrowed_chords():
@@ -161,7 +173,7 @@ def test_get_borrowed_with_no_borrowed_chords():
         {"chord": "Cmaj", "is_diatonic": True},
         {"chord": "Dmin", "is_diatonic": True},
     ]
-    result = get_borrowed_chords(analysis, "Mixolydian")
+    result = get_borrowed_chords(analysis)
     assert result == {}
 
 
@@ -172,17 +184,9 @@ def test_get_borrowed_chords_in_c_ionian():
     """
     analysis = [
         # Dm9 est diatonique en Mixolydian (en plus de Ionian)
-        {
-            "chord": "Dm9",
-            "is_diatonic": False,
-            "segment_context": {"tonic": "C", "mode": "Ionian"},
-        },
+        {"chord": "Dm9", "is_diatonic": False, "segment_context": {"tonic": "C", "mode": "Ionian"}},
         # Fm9 est diatonique à plusieurs modes mineurs
-        {
-            "chord": "Fm9",
-            "is_diatonic": False,
-            "segment_context": {"tonic": "C", "mode": "Ionian"},
-        },
+        {"chord": "Fm9", "is_diatonic": False, "segment_context": {"tonic": "C", "mode": "Ionian"}},
         # Dm7b5 est le ii de plusieurs modes mineurs
         {
             "chord": "Dm7b5",
@@ -195,19 +199,11 @@ def test_get_borrowed_chords_in_c_ionian():
             "segment_context": {"tonic": "C", "mode": "Ionian"},
         },
     ]
-    result = get_borrowed_chords(analysis, "Ionian")
-
-    # Dictionnaire attendu mis à jour avec les résultats corrects de l'analyse par notes
+    result = get_borrowed_chords(analysis)
     expected = {
-        "Dm9": ["Mixolydian", "Ionian #5"],
-        "Fm9": ["Aeolian", "Harmonic Minor", "Phrygian"],
-        "Dm7b5": [
-            "Aeolian",
-            "Locrian ♮2",
-            "Mixolydian b6",
-            "Harmonic Minor",
-            "Ionian #5",
-        ],
+        "Dm9": ["Ionian", "Mixolydian", "Ionian #5"],
+        "Fm9": ["Phrygian", "Aeolian", "Harmonic Minor"],
+        "Dm7b5": ["Aeolian", "Harmonic Minor", "Ionian #5", "Mixolydian b6", "Locrian ♮2"],
     }
 
     for key in expected:

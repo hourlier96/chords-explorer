@@ -1,7 +1,7 @@
-import analyzer from '@/api/analyzer.ts'
+import analyzer from "@/api/analyzer.ts";
 
 export function useApis() {
   return {
-    analyzer
-  }
+    analyzer,
+  };
 }

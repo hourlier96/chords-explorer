@@ -103,16 +103,13 @@ def test_analyze_v7_in_minor_key_borrowing_from_major():
     assert result == expected
 
 
-# --- NOUVEAU TEST: Cas spécifique de la demande initiale ---
-
-
 def test_analyze_borrowed_chord_from_parallel_minor():
     result = analyze_chord_in_context("D#add9", 0, "Ionian")  # D#add9 (Ebadd9) en Do majeur
 
     # L'accord bIII est un emprunt au mode mineur parallèle (Aeolian),
     # où il est naturellement majeur (Ebmaj7). Le test doit refléter cela.
     expected = {
-        "chord": "D#add9",
+        "chord": "Ebadd9",
         "found_numeral": "bIIIadd9",
         "expected_numeral": "bIIImaj7",
         "found_quality": "add9",

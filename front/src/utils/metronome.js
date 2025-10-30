@@ -1,23 +1,23 @@
-import * as Tone from 'tone'
+import * as Tone from "tone";
 
 // Crée deux synthétiseurs pour les deux sons différents du métronome.
 // Un son plus grave pour le premier temps (le "downbeat").
 const strongBeatSynth = new Tone.MembraneSynth({
   pitchDecay: 0.005,
   octaves: 10,
-  oscillator: { type: 'sine' },
-  envelope: { attack: 0.001, decay: 0.15, sustain: 0.01, release: 0.05 }
-}).toDestination()
-strongBeatSynth.volume.value = -2 // Un peu plus fort
+  oscillator: { type: "sine" },
+  envelope: { attack: 0.001, decay: 0.15, sustain: 0.01, release: 0.05 },
+}).toDestination();
+strongBeatSynth.volume.value = -2; // Un peu plus fort
 
 // Un son plus aigu pour les autres temps (les "upbeats").
 const weakBeatSynth = new Tone.MembraneSynth({
   pitchDecay: 0.01,
   octaves: 4,
-  oscillator: { type: 'sine' },
-  envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.05 }
-}).toDestination()
-weakBeatSynth.volume.value = -12 // Moins fort
+  oscillator: { type: "sine" },
+  envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.05 },
+}).toDestination();
+weakBeatSynth.volume.value = -12; // Moins fort
 
 /**
  * Joue un son de métronome.
@@ -28,12 +28,12 @@ weakBeatSynth.volume.value = -12 // Moins fort
  */
 function click(beatIndex, beatsPerMeasure, time) {
   if (beatIndex % beatsPerMeasure === 0) {
-    strongBeatSynth.triggerAttackRelease('C2', '8n', time)
+    strongBeatSynth.triggerAttackRelease("C2", "8n", time);
   } else {
-    weakBeatSynth.triggerAttackRelease('G2', '8n', time)
+    weakBeatSynth.triggerAttackRelease("G2", "8n", time);
   }
 }
 
 export const metronome = {
-  click
-}
+  click,
+};

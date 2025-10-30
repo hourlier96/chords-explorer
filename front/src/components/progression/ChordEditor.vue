@@ -8,18 +8,21 @@
               <div
                 v-for="enharmonicNote in note.split(' / ')"
                 :key="enharmonicNote"
-                @click="!props.disabled && updateChord('root', enharmonicNote)"
-                :class="{ active: isNoteActive(enharmonicNote), disabled: props.disabled }"
+                :class="{
+                  active: isNoteActive(enharmonicNote),
+                  disabled: props.disabled,
+                }"
                 class="note-badge"
+                @click="!props.disabled && updateChord('root', enharmonicNote)"
               >
                 {{ enharmonicNote }}
               </div>
             </div>
             <div
               v-else
-              @click="!props.disabled && updateChord('root', note)"
               :class="{ active: isNoteActive(note), disabled: props.disabled }"
               class="note-badge"
+              @click="!props.disabled && updateChord('root', note)"
             >
               {{ note }}
             </div>
@@ -31,9 +34,14 @@
               <div
                 v-for="group in QUALITIES"
                 :key="group.label"
-                @click="!props.disabled && (activeQualityCategory = group.label)"
-                :class="{ active: activeQualityCategory === group.label, disabled: props.disabled }"
+                :class="{
+                  active: activeQualityCategory === group.label,
+                  disabled: props.disabled,
+                }"
                 class="category-badge"
+                @click="
+                  !props.disabled && (activeQualityCategory = group.label)
+                "
               >
                 {{ group.label }}
               </div>
@@ -42,9 +50,12 @@
               <div
                 v-for="option in activeQualityOptions"
                 :key="option.value"
-                @click="!props.disabled && updateChord('quality', option.value)"
-                :class="{ active: chord.quality === option.value, disabled: props.disabled }"
+                :class="{
+                  active: chord.quality === option.value,
+                  disabled: props.disabled,
+                }"
                 class="option-badge"
+                @click="!props.disabled && updateChord('quality', option.value)"
               >
                 {{ option.text }}
               </div>
@@ -52,17 +63,19 @@
           </div>
           <div class="inversion-control-footer">
             <div
-              @click="!props.disabled && changeInversion(-1)"
               class="inversion-badge"
               :class="{ disabled: props.disabled }"
+              @click="!props.disabled && changeInversion(-1)"
             >
               -
             </div>
-            <span v-if="chord?.notes === undefined">Position {{ chord.inversion + 1 }}</span>
+            <span v-if="chord?.notes === undefined"
+              >Position {{ chord.inversion + 1 }}</span
+            >
             <div
-              @click="!props.disabled && changeInversion(1)"
               class="inversion-badge"
               :class="{ disabled: props.disabled }"
+              @click="!props.disabled && changeInversion(1)"
             >
               +
             </div>
@@ -70,92 +83,94 @@
         </div>
       </div>
     </div>
-    <div v-else class="placeholder-text">Cliquez sur un accord pour l'éditer.</div>
+    <div v-else class="placeholder-text">
+      Cliquez sur un accord pour l'éditer.
+    </div>
   </v-card>
 </template>
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { QUALITIES, NOTES } from '@/constants.js'
-import { piano, getNotesForChord } from '@/utils/sampler.js'
-import { ALL_PLAYABLE_NOTES } from '@/keyboard.js'
-import { ENHARMONIC_EQUIVALENTS } from '@/constants.js'
+import { ref, computed, watch } from "vue";
+import { QUALITIES, NOTES } from "@/constants.js";
+import { piano, getNotesForChord } from "@/utils/sampler.js";
+import { ALL_PLAYABLE_NOTES } from "@/keyboard.js";
+import { ENHARMONIC_EQUIVALENTS } from "@/constants.js";
 
 const props = defineProps({
   modelValue: { type: Object, default: null },
-  disabled: { type: Boolean, default: false }
-})
+  disabled: { type: Boolean, default: false },
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
 const chord = computed({
   get: () => props.modelValue,
   set: (newValue) => {
-    emit('update:modelValue', newValue)
-  }
-})
+    emit("update:modelValue", newValue);
+  },
+});
 
-const activeQualityCategory = ref('Majeurs')
+const activeQualityCategory = ref("Majeurs");
 
 const activeQualityOptions = computed(() => {
-  if (!activeQualityCategory.value) return []
-  const group = QUALITIES.find((g) => g.label === activeQualityCategory.value)
-  return group ? group.options : []
-})
+  if (!activeQualityCategory.value) return [];
+  const group = QUALITIES.find((g) => g.label === activeQualityCategory.value);
+  return group ? group.options : [];
+});
 
 watch(
   () => chord.value,
   (newChord) => {
     if (newChord) {
-      let foundCategory = null
+      let foundCategory = null;
       if (newChord.quality) {
         for (const group of QUALITIES) {
           if (group.options.some((opt) => opt.value === newChord.quality)) {
-            foundCategory = group.label
-            break
+            foundCategory = group.label;
+            break;
           }
         }
       }
-      activeQualityCategory.value = foundCategory || 'Majeurs'
+      activeQualityCategory.value = foundCategory || "Majeurs";
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 function isNoteActive(note) {
-  if (!chord.value) return false
-  return chord.value.root === note.split(' / ')[0]
+  if (!chord.value) return false;
+  return chord.value.root === note.split(" / ")[0];
 }
 
 function updateChord(key, value) {
-  const newChord = { ...chord.value, [key]: value }
-  chord.value = newChord
-  delete newChord.notes
-  piano.play(newChord)
+  const newChord = { ...chord.value, [key]: value };
+  chord.value = newChord;
+  delete newChord.notes;
+  piano.play(newChord);
 }
 
 const normalizeNote = (note) => {
-  const octave = note.slice(-1)
-  const root = note.slice(0, -1)
-  const mappedRoot = ENHARMONIC_EQUIVALENTS[root] || root
-  return mappedRoot + octave
-}
+  const octave = note.slice(-1);
+  const root = note.slice(0, -1);
+  const mappedRoot = ENHARMONIC_EQUIVALENTS[root] || root;
+  return mappedRoot + octave;
+};
 
 function changeInversion(direction) {
-  const currentInversion = chord.value.inversion || 0
-  const newInversion = currentInversion + direction
-  const testChord = { ...chord.value, inversion: newInversion }
-  const notes = getNotesForChord(testChord)
+  const currentInversion = chord.value.inversion || 0;
+  const newInversion = currentInversion + direction;
+  const testChord = { ...chord.value, inversion: newInversion };
+  const notes = getNotesForChord(testChord);
 
-  if (!notes || notes.length === 0) return
+  if (!notes || notes.length === 0) return;
 
   const areNotesInRange = notes.every((note) => {
-    const normalized = normalizeNote(note)
-    return ALL_PLAYABLE_NOTES.includes(normalized)
-  })
+    const normalized = normalizeNote(note);
+    return ALL_PLAYABLE_NOTES.includes(normalized);
+  });
 
   if (areNotesInRange) {
-    chord.value = testChord
-    piano.play(testChord)
+    chord.value = testChord;
+    piano.play(testChord);
   }
 }
 </script>

@@ -40,10 +40,11 @@ lint:
 	echo "Running type checking..." && \
 	mypy --config-file=pyproject.toml . && \
 	cd ../$(FRONTEND_DIR) && \
-	echo "Running frontend linting..." && \
-	npm run lint && \
 	echo "Running frontend formatting..." && \
-	npm run format
+	npm run format && \
+	echo "Running frontend linting..." && \
+	npm run lint
+
 
 help:
 	@echo "Makefile commands:"

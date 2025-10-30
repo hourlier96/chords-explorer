@@ -3,10 +3,13 @@
     class="timeline-container"
     :style="{
       '--total-beats': totalBeats,
-      '--beat-width': `${beatWidth}px`
+      '--beat-width': `${beatWidth}px`,
     }"
   >
-    <div class="playhead" :style="{ transform: `translateX(${playheadPosition}px)` }"></div>
+    <div
+      class="playhead"
+      :style="{ transform: `translateX(${playheadPosition}px)` }"
+    />
 
     <div class="rhythm-timeline" @click="handleClick">
       <template v-for="beat in totalBeats" :key="`timeline-beat-${beat}`">
@@ -15,7 +18,10 @@
           :class="{ 'measure-start': (beat - 1) % beatsPerMeasure === 0 }"
           :style="{ 'grid-column-start': beat }"
         >
-          <span v-if="(beat - 1) % beatsPerMeasure === 0" class="measure-number">
+          <span
+            v-if="(beat - 1) % beatsPerMeasure === 0"
+            class="measure-number"
+          >
             {{ Math.floor((beat - 1) / beatsPerMeasure) + 1 }}
           </span>
         </div>
@@ -30,16 +36,16 @@ const props = defineProps({
   beatsPerMeasure: { type: Number, required: true },
   beatWidth: { type: Number, required: true },
   isPlaying: { type: Boolean, default: false },
-  playheadPosition: { type: Number, default: 0 }
-})
+  playheadPosition: { type: Number, default: 0 },
+});
 
-const emit = defineEmits(['seek'])
+const emit = defineEmits(["seek"]);
 
 function handleClick(event) {
-  const clickX = event.offsetX
+  const clickX = event.offsetX;
 
-  const targetBeat = clickX / props.beatWidth
-  emit('seek', targetBeat)
+  const targetBeat = clickX / props.beatWidth;
+  emit("seek", targetBeat);
 }
 </script>
 

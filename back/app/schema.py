@@ -13,5 +13,5 @@ class ChordItem(BaseModel):
 
 
 class ProgressionRequest(BaseModel):
-    chordsData: List[ChordItem]
+    chords_data: List[ChordItem]
     model: str

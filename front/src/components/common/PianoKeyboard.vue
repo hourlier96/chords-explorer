@@ -1,78 +1,78 @@
 <template>
-  <div class="piano-container" ref="pianoContainer">
+  <div ref="pianoContainer" class="piano-container">
     <div class="piano-keyboard">
       <div v-for="key in whiteKeys" :key="key.note" class="white-key-wrapper">
         <button
           :class="getNoteClasses(key.note, 'white')"
-          @click="clickNote(key.note)"
           :disabled="props.disabled"
-        ></button>
+          @click="clickNote(key.note)"
+        />
         <button
           v-if="key.blackKey"
           :class="getNoteClasses(key.blackKey, 'black')"
-          @click.stop="clickNote(key.blackKey)"
           :disabled="props.disabled"
-        ></button>
+          @click.stop="clickNote(key.blackKey)"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
-import { whiteKeys } from '@/keyboard.js'
+import { onMounted, ref, computed } from "vue";
+import { whiteKeys } from "@/keyboard.js";
 
-const emit = defineEmits(['add-note', 'remove-note'])
-const pianoContainer = ref(null)
+const emit = defineEmits(["add-note", "remove-note"]);
+const pianoContainer = ref(null);
 
 const props = defineProps({
   activeNotes: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   disabled: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
 const normalizedActiveNotes = computed(() => {
-  const noteMap = { Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#' }
+  const noteMap = { Db: "C#", Eb: "D#", Gb: "F#", Ab: "G#", Bb: "A#" };
   return props.activeNotes.map((note) => {
-    const octave = note.slice(-1)
-    const root = note.slice(0, -1)
-    const mappedRoot = noteMap[root] || root
-    return mappedRoot + octave
-  })
-})
+    const octave = note.slice(-1);
+    const root = note.slice(0, -1);
+    const mappedRoot = noteMap[root] || root;
+    return mappedRoot + octave;
+  });
+});
 
 function getNoteClasses(note, type) {
-  const isActive = normalizedActiveNotes.value.includes(note)
+  const isActive = normalizedActiveNotes.value.includes(note);
   return {
-    'piano-key': true,
-    white: type === 'white',
-    black: type === 'black',
-    active: isActive
-  }
+    "piano-key": true,
+    white: type === "white",
+    black: type === "black",
+    active: isActive,
+  };
 }
 
 function clickNote(note) {
-  const isActive = normalizedActiveNotes.value.includes(note)
+  const isActive = normalizedActiveNotes.value.includes(note);
 
   if (isActive) {
-    emit('remove-note', note)
+    emit("remove-note", note);
   } else {
-    emit('add-note', note)
+    emit("add-note", note);
   }
 }
 
 onMounted(() => {
-  const container = pianoContainer.value
+  const container = pianoContainer.value;
   if (container) {
-    const centerPosition = (container.scrollWidth - container.clientWidth) / 2
-    container.scrollLeft = centerPosition
+    const centerPosition = (container.scrollWidth - container.clientWidth) / 2;
+    container.scrollLeft = centerPosition;
   }
-})
+});
 </script>
 <style scoped>
 .piano-container {

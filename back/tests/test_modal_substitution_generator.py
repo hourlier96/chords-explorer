@@ -1,9 +1,6 @@
 import pytest
 
-from app.modal_substitution.generator import (
-    get_substitution_info,
-    get_substitutions,
-)
+from app.modal_substitution.generator import get_substitution_info, get_substitutions
 
 
 class TestGetSubstitutionInfo:
@@ -101,11 +98,7 @@ class TestGetSubstitutions:
             # Le VIe degré de Ré Majeur est Si mineur 7 (Bm7).
             {"chord": "Bm7", "roman": "vi", "quality": "m7"},
             # L'accord ignoré reprend les infos de la progression originale.
-            {
-                "chord": "A7",
-                "roman": None,
-                "quality": None,
-            },
+            {"chord": "A7", "roman": None, "quality": None},
         ]
         assert result == expected
 
@@ -128,15 +121,7 @@ class TestGetSubstitutions:
         result = get_substitutions(progression, 0, sub_info)
 
         expected = [
-            {
-                "chord": "Fm",
-                "roman": None,
-                "quality": None,
-            },
-            {
-                "chord": "C7",
-                "roman": None,
-                "quality": None,
-            },
+            {"chord": "Fm", "roman": None, "quality": None},
+            {"chord": "C7", "roman": None, "quality": None},
         ]
         assert result == expected

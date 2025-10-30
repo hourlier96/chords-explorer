@@ -35,40 +35,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import CardContainer from '@/components/common/CardContainer.vue'
-import { watch } from 'vue'
+import { ref } from "vue";
+import CardContainer from "@/components/common/CardContainer.vue";
+import { watch } from "vue";
 
-const emit = defineEmits(['confirm', 'close'])
+const emit = defineEmits(["confirm", "close"]);
 
 const props = defineProps({
   isOpen: {
     type: Boolean,
-    default: false
+    default: false,
   },
   title: {
     type: String,
-    default: 'common.confirmationModal.title'
-  }
-})
+    default: "common.confirmationModal.title",
+  },
+});
 
-let isOpen = ref(props.isOpen)
+let isOpen = ref(props.isOpen);
 
 watch(
   () => props.isOpen,
   (newValue) => {
-    isOpen.value = newValue
-  }
-)
+    isOpen.value = newValue;
+  },
+);
 
 function confirm() {
-  isOpen.value = false
-  emit('confirm')
+  isOpen.value = false;
+  emit("confirm");
 }
 
 function close() {
-  isOpen.value = false
-  emit('close')
+  isOpen.value = false;
+  emit("close");
 }
 </script>
 

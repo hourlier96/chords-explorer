@@ -2,20 +2,24 @@
   <div class="timeline-container">
     <div class="main-toolbar">
       <PlayerControls
-        :is-playing="isPlaying"
-        :is-track-empty="items.length === 0"
         v-model:time-signature="timeSignature"
         v-model:is-metronome-active="isMetronomeActive"
         v-model:is-looping="isLooping"
+        :is-playing="isPlaying"
+        :is-track-empty="items.length === 0"
         @play="playEntireProgression"
         @stop="stopSound"
       />
-      <slot name="toolbar-controls"></slot>
+      <slot name="toolbar-controls" />
     </div>
 
     <v-card>
-      <div ref="gridContainerRef" class="progression-grid-container" @click="$emit('grid-click')">
-        <slot name="header"></slot>
+      <div
+        ref="gridContainerRef"
+        class="progression-grid-container"
+        @click="$emit('grid-click')"
+      >
+        <slot name="header" />
 
         <TimelineGrid
           :total-beats="totalBeats"
@@ -26,21 +30,21 @@
           @seek="handleSeek"
         />
 
-        <slot name="above-track"></slot>
+        <slot name="above-track" />
         <div
           class="items-track"
           :style="{
             '--total-beats': totalBeats,
-            '--beat-width': `${BEAT_WIDTH}px`
+            '--beat-width': `${BEAT_WIDTH}px`,
           }"
         >
           <draggable
             v-if="draggable"
-            :modelValue="itemsWithPositions"
-            @end="$emit('drag-end', $event)"
+            :model-value="itemsWithPositions"
             item-key="id"
             class="draggable-container"
             ghost-class="ghost"
+            @end="$emit('drag-end', $event)"
           >
             <template #item="{ element: item, index }">
               <div
@@ -49,27 +53,30 @@
                 :class="{ 'is-playing-halo': index === currentlyPlayingIndex }"
                 @click.stop="$emit('item-click', item, $event)"
               >
-                <slot name="item" :item="item" :index="index"></slot>
+                <slot name="item" :item="item" :index="index" />
               </div>
             </template>
           </draggable>
 
           <div v-else class="draggable-container">
-            <template v-for="(item, index) in itemsWithPositions" :key="item.id">
+            <template
+              v-for="(item, index) in itemsWithPositions"
+              :key="item.id"
+            >
               <div
                 class="item-wrapper"
                 :style="{ gridColumn: `${item.start} / span ${item.duration}` }"
                 :class="{ 'is-playing-halo': index === currentlyPlayingIndex }"
                 @click.stop="$emit('item-click', item, $event)"
               >
-                <slot name="item" :item="item" :index="index"></slot>
+                <slot name="item" :item="item" :index="index" />
               </div>
             </template>
           </div>
         </div>
 
         <div class="footer-controls-container">
-          <slot name="footer"></slot>
+          <slot name="footer" />
         </div>
       </div>
     </v-card>
@@ -77,40 +84,40 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import draggable from 'vuedraggable'
+import { ref, computed, watch } from "vue";
+import draggable from "vuedraggable";
 
-import { BEAT_WIDTH, useStatePlayer } from '@/composables/useStatePlayer.ts'
-import TimelineGrid from '@/components/common/TimelineGrid.vue'
-import PlayerControls from '@/components/common/PlayerControls.vue'
+import { BEAT_WIDTH, useStatePlayer } from "@/composables/useStatePlayer.ts";
+import TimelineGrid from "@/components/common/TimelineGrid.vue";
+import PlayerControls from "@/components/common/PlayerControls.vue";
 
 const props = defineProps({
   items: { type: Array, required: true },
   playCallback: { type: Function, required: true },
-  draggable: { type: Boolean, default: false }
-})
+  isDraggable: { type: Boolean, default: false },
+});
 
-const emit = defineEmits(['drag-end', 'item-click', 'grid-click'])
+defineEmits(["drag-end", "item-click", "grid-click"]);
 
-const gridContainerRef = ref(null)
+const gridContainerRef = ref(null);
 defineExpose({
-  gridContainerRef
-})
+  gridContainerRef,
+});
 
 // Calcule les positions de départ pour chaque élément
 const itemsWithPositions = computed(() => {
-  let currentBeat = 1
+  let currentBeat = 1;
   return props.items.map((item) => {
-    const start = currentBeat
-    currentBeat += item.duration
-    return { ...item, start }
-  })
-})
+    const start = currentBeat;
+    currentBeat += item.duration;
+    return { ...item, start };
+  });
+});
 
 const handlePlayItem = async (payload) => {
   // On délègue la logique de lecture à la fonction passée en prop
-  await props.playCallback(payload)
-}
+  await props.playCallback(payload);
+};
 
 const {
   playheadPosition,
@@ -123,38 +130,38 @@ const {
   isLooping,
   playEntireProgression,
   stopSound,
-  seek
-} = useStatePlayer(itemsWithPositions, { onPlayItemAsync: handlePlayItem })
+  seek,
+} = useStatePlayer(itemsWithPositions, { onPlayItemAsync: handlePlayItem });
 
 // Logique de défilement pendant la lecture
 watch(playheadPosition, (newPixelPosition) => {
-  if (!isPlaying.value || !gridContainerRef.value) return
-  const container = gridContainerRef.value
-  const containerWidth = container.clientWidth
-  const targetScrollLeft = newPixelPosition - containerWidth / 2
+  if (!isPlaying.value || !gridContainerRef.value) return;
+  const container = gridContainerRef.value;
+  const containerWidth = container.clientWidth;
+  const targetScrollLeft = newPixelPosition - containerWidth / 2;
   container.scrollTo({
     left: targetScrollLeft,
-    behavior: 'auto'
-  })
-})
+    behavior: "auto",
+  });
+});
 
 // Logique de positionnement au clic (seek)
 function findClosestChordStartBeat(beat) {
   const targetItem = itemsWithPositions.value.find(
-    (item) => beat + 1 >= item.start && beat + 1 < item.start + item.duration
-  )
-  return targetItem ? targetItem.start - 1 : beat
+    (item) => beat + 1 >= item.start && beat + 1 < item.start + item.duration,
+  );
+  return targetItem ? targetItem.start - 1 : beat;
 }
 
 async function handleSeek(targetBeat) {
-  const snappedBeat = findClosestChordStartBeat(targetBeat)
-  const wasPlaying = isPlaying.value
+  const snappedBeat = findClosestChordStartBeat(targetBeat);
+  const wasPlaying = isPlaying.value;
   if (wasPlaying) {
-    await stopSound()
-    seek(snappedBeat)
-    playEntireProgression()
+    await stopSound();
+    seek(snappedBeat);
+    playEntireProgression();
   } else {
-    seek(snappedBeat)
+    seek(snappedBeat);
   }
 }
 </script>

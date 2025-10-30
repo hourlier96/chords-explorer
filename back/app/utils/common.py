@@ -1,9 +1,4 @@
-from constants import (
-    CORE_QUALITIES,
-    MODES_DATA,
-    NOTE_INDEX_MAP,
-    NOTES,
-)
+from constants import CORE_QUALITIES, MODES_DATA, NOTE_INDEX_MAP, NOTES
 
 
 # Returns the chromatic index (0–11) for a given note string
@@ -12,15 +7,7 @@ def get_note_index(note_str: str) -> int:
     Converts a note string (e.g., "C#", "Gb") into its chromatic index (0-11).
     This function is guaranteed to return an integer or raise a ValueError.
     """
-    note_map = {
-        "DB": "C#",
-        "EB": "D#",
-        "FB": "E",
-        "GB": "F#",
-        "AB": "G#",
-        "BB": "A#",
-        "B#": "C",
-    }
+    note_map = {"DB": "C#", "EB": "D#", "FB": "E", "GB": "F#", "AB": "G#", "BB": "A#", "B#": "C"}
 
     clean_note = (
         note_str.upper()
@@ -57,28 +44,25 @@ def get_note_from_index(index):
     return NOTES[index % 12]
 
 
-# Parses a chord name and returns its root index and a normalized quality string
-def parse_chord(chord_name):
+def parse_chord(chord_name: str) -> tuple | None:
+    """
+    Parses a chord name and returns its root index, a normalized quality string,
+    and the root name as a string.
+    """
     chord_name = chord_name.strip()
 
     # Utilisation des qualités reconnues depuis CORE_QUALITIES
-    KNOWN_QUALITIES = sorted(CORE_QUALITIES.keys(), key=lambda q: -len(q))
+    known_qualities = sorted(CORE_QUALITIES.keys(), key=lambda q: -len(q))
 
-    for quality in KNOWN_QUALITIES:
+    for quality in known_qualities:
         if chord_name.endswith(quality):
             root = chord_name[: -len(quality)] if len(quality) > 0 else chord_name
             try:
                 root_index = get_note_index(root)
-                return root_index, quality
+                return root_index, quality, root
             except ValueError:
                 return None
-
-    # Si aucun suffixe ne matche, on tente un accord majeur simple
-    try:
-        root_index = get_note_index(chord_name)
-        return root_index, ""
-    except ValueError:
-        return None
+    return None
 
 
 def is_dominant_chord(chord_name, parsed_chord=None):
@@ -94,7 +78,7 @@ def is_dominant_chord(chord_name, parsed_chord=None):
     if not parsed_chord:
         return False
 
-    _, quality = parsed_chord
+    _, quality, _ = parsed_chord
     core_quality = _get_core_quality(quality)
 
     # 1. Les accords dont la qualité de base est 'dominant' le sont toujours.
@@ -188,28 +172,7 @@ def get_scale_notes(key_tonic_str: str, mode_name: str) -> list[str]:
 def format_numeral(base_numeral, quality):
     core_quality = CORE_QUALITIES.get(quality, "major")
     numeral = base_numeral.lower() if core_quality in ["minor", "diminished"] else base_numeral
-    suffix_map = {
-        "maj7": "maj7",
-        "m7": "7",
-        "7": "7",
-        "m7b5": "ø7",
-        "dim7": "°7",
-        "dim": "°",
-        "aug": "+",
-        "sus4": "sus4",
-        "sus2": "sus2",
-        "add9": "add9",
-        "m(maj7)": "m(maj7)",
-        "m6": "m6",
-        "m9": "m9",
-        "m11": "m11",
-        "m13": "m13",
-        "9": "9",
-        "11": "11",
-        "13": "13",
-    }
-    suffix = suffix_map.get(quality, "")
-    return numeral + suffix
+    return numeral + quality
 
 
 def get_chord_notes(chord_name: str) -> list[str] | None:
@@ -223,9 +186,9 @@ def get_chord_notes(chord_name: str) -> list[str] | None:
 
     Returns:
         list[str] | None: Une liste de notes ou None si l'accord est invalide.
-    """
 
-    CHORD_FORMULAS = {
+    """
+    chord_formulas = {
         # --- Triades de base ---
         "": [0, 4, 7],
         "M": [0, 4, 7],
@@ -293,13 +256,13 @@ def get_chord_notes(chord_name: str) -> list[str] | None:
     }
 
     # Trier les qualités de la plus longue à la plus courte pour une analyse correcte
-    KNOWN_QUALITIES = sorted(CHORD_FORMULAS.keys(), key=len, reverse=True)
+    known_qualities = sorted(chord_formulas.keys(), key=len, reverse=True)
 
     # --- Logique de la fonction ---
     chord_name = chord_name.strip()
 
     # 1. Itérer sur les qualités connues pour trouver la bonne correspondance
-    for quality in KNOWN_QUALITIES:
+    for quality in known_qualities:
         if chord_name.endswith(quality):
             # Extraire la partie racine potentielle
             root_str = chord_name[: -len(quality)] if quality else chord_name
@@ -307,7 +270,7 @@ def get_chord_notes(chord_name: str) -> list[str] | None:
                 root_index = NOTE_INDEX_MAP[root_str]
 
                 # Construire les notes de l'accord
-                intervals = CHORD_FORMULAS[quality]
+                intervals = chord_formulas[quality]
                 chord_notes = []
                 for interval in intervals:
                     note_index = (root_index + interval) % 12
@@ -329,6 +292,7 @@ def is_chord_diatonic(chord_name: str, key_tonic_str: str, mode_name: str) -> bo
 
     Returns:
         bool: True si l'accord est diatonique, False sinon.
+
     """
     try:
         # 1. Obtenir les notes de la gamme de la tonalité.

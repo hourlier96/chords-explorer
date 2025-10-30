@@ -25,7 +25,7 @@ My project description
 npm install
 npm run dev
 
-# OR 
+# OR
 
 # WITH DOCKER
 # Dev server (vite)
@@ -77,7 +77,7 @@ chords_explorer
 ├── src                                      - Web stuffs
 │   ├── App.vue                                - Vue root component
 │   ├── api                                    - Api Settings & axios wrapper
-│   ├── assets                                 - Global css & images 
+│   ├── assets                                 - Global css & images
 │   └── components
 │       └── common                             - Reusable components (Form, Container, Table...)
 │       └── Navbar.vue
@@ -141,7 +141,7 @@ gcloud components update && gcloud components install beta
 #     - secretmanager.secretAccessor
 #     - storage.admin
 #     - serviceusage.serviceUsageAdmin
-# 
+#
 # - Cloud Build trigger to run deployment on push
 
 # Then it starts the Cloud Build trigger
