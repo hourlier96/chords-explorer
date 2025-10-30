@@ -246,6 +246,54 @@ def check_secondary_functions(
     return None
 
 
+def check_tritone_substitution(
+    chord_name: str, chord_notes: Set[str], tonic: str, original_mode: str = "ionian"
+) -> Optional[Dict]:
+    """
+    Vérifie si l'accord a une fonction de substitution tritonique (subV7/x).
+    """
+    original_scale = build_scale(tonic, original_mode)
+    if not original_scale:
+        return None
+
+    parsed_data = parse_chord(chord_name)
+    if not parsed_data:
+        return None
+    actual_root_index, _, _ = parsed_data
+
+    # Vérifie si l'accord a la qualité de dominante (tierce majeure + septième mineure)
+    # C'est une condition nécessaire pour une substitution tritonique
+    expected_3rd_index = (actual_root_index + 4) % 12
+    expected_7th_index = (actual_root_index + 10) % 12
+    expected_3rd_note = NOTES[expected_3rd_index]
+    expected_7th_note = NOTES[expected_7th_index]
+
+    if not (expected_3rd_note in chord_notes and expected_7th_note in chord_notes):
+        # Si ce n'est pas un accord de 7e de dominante, ce n'est pas un subV7
+        return None
+
+    # Itère sur TOUTES les cibles possibles (I, ii, iii, IV, V, vi, vii)
+    for i in range(7):
+        target_chord_root = original_scale[i]
+
+        # 1. Trouver la dominante NORMALE de la cible
+        standard_dominant_root_index = (NOTE_TO_INDEX[target_chord_root] + 7) % 12
+
+        # 2. Trouver la fondamentale de la substitution tritonique (un triton plus loin)
+        tritone_sub_root_index = (standard_dominant_root_index + 6) % 12
+
+        # 3. Vérifier si notre accord a cette fondamentale
+        if actual_root_index == tritone_sub_root_index:
+            target_degree = MODE_SPECIFIC_NUMERALS.get(original_mode, [])[i]
+            return {
+                "origin": f"Substitution tritonique de {target_chord_root}",
+                "degree": f"subV7/{target_degree}",
+                "function": f"Substitution tritonique de {target_degree}",
+            }
+
+    return None
+
+
 def get_borrowed_chords(quality_analysis: list) -> dict:
     """Analyse les accords empruntés avec la logique mise à jour."""
     borrowed_chords = {}
@@ -267,13 +315,20 @@ def get_borrowed_chords(quality_analysis: list) -> dict:
                 }
                 continue
 
+            # 1. Vérifier les dominantes secondaires
             analysis = check_secondary_functions(chord_name, chord_notes, tonic, mode)
 
+            # 2. (NOUVEAU) Vérifier les substitutions tritoniques si rien n'est trouvé
+            if not analysis:
+                analysis = check_tritone_substitution(chord_name, chord_notes, tonic, mode)
+
+            # 3. Vérifier les emprunts parallèles si rien n'est trouvé
             if not analysis:
                 analysis = check_parallel_modes(chord_notes, tonic)
 
+            # 4. Cas par défaut
             if not analysis:
-                analysis = {"function": "Aucun emprunt trouvé."}
+                analysis = {"function": "Accord non-diatonique (origine inconnue)"}
 
             borrowed_chords[chord_name] = analysis
 
