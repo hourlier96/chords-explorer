@@ -6,7 +6,6 @@
     :rail-width="56"
     :width="230"
     permanent
-    @click="expandRail(true)"
   >
     <v-btn
       variant="text"
@@ -34,25 +33,30 @@
         value="explore"
       />
     </v-list>
+    <v-divider />
   </v-navigation-drawer>
 </template>
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useStores } from "@/composables/useStores.js";
+
+const { pref } = useStores();
 
 let drawer = ref(true);
-let rail = ref(true);
+const { railExpanded: rail } = storeToRefs(pref);
 
 const emit = defineEmits(["expand"]);
 
 onMounted(() => {
   nextTick(() => {
-    expandRail(true);
+    emit("expand", pref.railExpanded);
   });
 });
 
 function expandRail(expand) {
-  rail.value = expand;
+  pref.setRail(expand);
   emit("expand", expand);
 }
 </script>

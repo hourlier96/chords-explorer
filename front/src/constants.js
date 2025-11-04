@@ -55,6 +55,7 @@ export const QUALITIES = [
       { value: "maj13", text: "Majeur 13" },
       { value: "maj13(no5)", text: "Majeur 13(no5)" },
       { value: "maj7#5", text: "Majeur 7♯5" },
+      { value: "maj7#11", text: "Majeur 7♯11" },
       { value: "maj7b5", text: "Majeur 7♭5" },
     ],
   },
@@ -315,6 +316,7 @@ export const CHORD_FORMULAS_NORMALIZED = {
   "7#5": [0, 4, 8, 10],
   "+7": [0, 4, 8, 10],
   "maj7#5": [0, 4, 8, 11],
+  "maj7#11": [0, 4, 7, 11, 6],
   "M7#5": [0, 4, 8, 11],
   maj7b5: [0, 4, 6, 11],
 
