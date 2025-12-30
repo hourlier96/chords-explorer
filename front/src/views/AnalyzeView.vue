@@ -89,7 +89,7 @@ const isLoading = ref(false);
 const analysisError = ref(null);
 const editingChordId = ref(null);
 
-const selectedAiModel = ref("gemini-2.5-flash");
+const selectedAiModel = ref("gemini-3-flash-preview");
 
 const selectedChordNotes = ref([]);
 const isRecalculating = ref(false);

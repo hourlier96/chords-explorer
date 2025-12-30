@@ -109,15 +109,15 @@
     <div class="analyze-section-container">
       <div class="model-selector">
         <label
-          :class="{ active: aiModel === 'gemini-2.5-flash' }"
+          :class="{ active: aiModel === 'gemini-3-flash-preview' }"
           class="radio-label"
         >
           <input
             type="radio"
             name="ai-model"
-            value="gemini-2.5-flash"
-            :checked="aiModel === 'gemini-2.5-flash'"
-            @change="$emit('update:aiModel', 'gemini-2.5-flash')"
+            value="gemini-3-flash-preview"
+            :checked="aiModel === 'gemini-3-flash-preview'"
+            @change="$emit('update:aiModel', 'gemini-3-flash-preview')"
           />
           Modèle Rapide
         </label>
@@ -157,15 +157,15 @@
         </button>
 
         <label
-          :class="{ active: aiModel === 'gemini-2.5-pro' }"
+          :class="{ active: aiModel === 'gemini-3-pro-preview' }"
           class="radio-label"
         >
           <input
             type="radio"
             name="ai-model"
-            value="gemini-2.5-pro"
-            :checked="aiModel === 'gemini-2.5-pro'"
-            @change="$emit('update:aiModel', 'gemini-2.5-pro')"
+            value="gemini-3-pro-preview"
+            :checked="aiModel === 'gemini-3-pro-preview'"
+            @change="$emit('update:aiModel', 'gemini-3-pro-preview')"
           />
           Modèle Précis
         </label>

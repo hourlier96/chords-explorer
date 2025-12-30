@@ -46,11 +46,11 @@ ignore = [
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-skip-magic-trailing-comma = true
 
 [tool.mypy]
 explicit_package_bases = true
 follow_untyped_imports = true
+ignore_missing_imports = true
 
 # https://github.com/pytest-dev/pytest-asyncio/issues/924
 [tool.pytest.ini_options]

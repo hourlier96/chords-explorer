@@ -186,7 +186,7 @@ CORE_QUALITIES = {
     "split3": "other",
 }
 
-MODES_DATA: Dict[str, Tuple[List[int], List[str], Optional[int]]] = {}
+
 MAJOR_MODES_DATA = {
     "Ionian": ([0, 2, 4, 5, 7, 9, 11], ["maj7", "m7", "m7", "maj7", "7", "m7", "m7b5"], 0),
     "Dorian": ([0, 2, 3, 5, 7, 9, 10], ["m7", "m7", "maj7", "7", "m7", "m7b5", "maj7"], -2),
@@ -275,6 +275,7 @@ MELODIC_MINOR_MODES = {
     ),
 }
 
+MODES_DATA: Dict[str, Tuple[List[int], List[str], Optional[int]]] = {}
 MODES_DATA.update(MAJOR_MODES_DATA)
 MODES_DATA.update(HARMONIC_MINOR_MODES)
 MODES_DATA.update(MELODIC_MINOR_MODES)

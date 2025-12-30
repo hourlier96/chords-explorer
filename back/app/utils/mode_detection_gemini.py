@@ -126,7 +126,6 @@ def detect_tonic_and_mode(progression: list[str], model: str) -> dict:
         response_step_2 = model_instance.generate_content(prompt_step_2)
         raw_text = response_step_2.text.strip()
 
-        # On suppose que vous avez une fonction comme celle-ci
         json_string = extract_json_from_response(raw_text)
         analysis_data = json.loads(json_string)
         return analysis_data

@@ -1,23 +1,19 @@
 from typing import Any, Dict, List, Tuple
 
 import uvicorn
-from dotenv import load_dotenv
+from back.app.chords_calculator.modal_substitution import get_substitution_info, get_substitutions
+from back.app.chords_calculator.secondary_dominant import get_secondary_dominant_for_target
+from back.app.chords_calculator.tritone_substitution import get_tritone_substitute
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.modal_substitution.generator import get_substitution_info, get_substitutions
 from app.schema import ChordItem, ProgressionRequest
-from app.secondary_dominant.generator import get_secondary_dominant_for_target
 from app.services.analysis import get_analysis_data
 from app.services.data_filler import fill_interface_data
-from app.tritone_substitution.generator import get_tritone_substitute
 from app.utils.borrowed_modes import get_borrowed_chords
 from app.utils.chords_analyzer import QualityAnalysisItem, analyze_chord_in_context
 from app.utils.common import get_note_from_index, get_note_index
 from constants import MAJOR_MODES_DATA, MODES_DATA
-
-load_dotenv()
-
 
 app = FastAPI()
 

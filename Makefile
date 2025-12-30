@@ -29,6 +29,12 @@ run: kill
 	sleep 2 && echo '\n- - - - - - - - - - - - - -' && \
 	cd ../$(FRONTEND_DIR) && npm run dev
 
+tests:
+	@cd $(BACKEND_DIR) && . $(VENV_NAME)/bin/activate && \
+	pytest tests/ && \
+	cd ../$(FRONTEND_DIR) && \
+	npm run test
+
 lint:
 	@cd $(BACKEND_DIR) && . $(VENV_NAME)/bin/activate && \
 	echo "Running imports sorting..." && \
@@ -54,4 +60,4 @@ help:
 	@echo "  lint:      Run import sorting, linting, formatting, and type checking
 	@echo "  help:      Display this help message."
 
-.PHONY: install run kill lint help
+.PHONY: install run kill tests lint help

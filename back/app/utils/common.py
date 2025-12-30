@@ -1,7 +1,6 @@
 from constants import CORE_QUALITIES, MODES_DATA, NOTE_INDEX_MAP, NOTES
 
 
-# Returns the chromatic index (0–11) for a given note string
 def get_note_index(note_str: str) -> int:
     """
     Converts a note string (e.g., "C#", "Gb") into its chromatic index (0-11).
@@ -39,12 +38,11 @@ def get_note_index(note_str: str) -> int:
         raise ValueError(f"Note '{note_to_find}' could not be resolved to a valid index.") from None
 
 
-# Returns note name from chromatic index (0–11)
-def get_note_from_index(index):
+def get_note_from_index(index) -> str:
     return NOTES[index % 12]
 
 
-def parse_chord(chord_name: str) -> tuple | None:
+def parse_chord(chord_name: str) -> tuple[int, str, str] | None:
     """
     Parses a chord name and returns its root index, a normalized quality string,
     and the root name as a string.
@@ -65,15 +63,13 @@ def parse_chord(chord_name: str) -> tuple | None:
     return None
 
 
-def is_dominant_chord(chord_name, parsed_chord=None):
+def is_dominant_chord(chord_name, parsed_chord=None) -> bool:
     """
     Vérifie si un accord est un accord de dominante.
     Un accord est considéré comme dominant si sa qualité de base est 'dominant',
     ou s'il s'agit d'une triade majeure simple (qui peut fonctionner comme un dominant).
     """
     if not parsed_chord:
-        # Note: Assurez-vous que les fonctions parse_chord et _get_core_quality
-        # sont disponibles dans le même scope.
         parsed_chord = parse_chord(chord_name)
     if not parsed_chord:
         return False
@@ -95,7 +91,6 @@ def is_dominant_chord(chord_name, parsed_chord=None):
     return False
 
 
-# Returns a diatonic 7th chord for a degree and tonic, with optional simplification
 def get_diatonic_7th_chord(degree, key_tonic_index, mode_name="Ionian"):
     """
     Génère un accord de septième diatonique à partir d'un degré, d'une tonique et d'un mode.
@@ -172,7 +167,19 @@ def get_scale_notes(key_tonic_str: str, mode_name: str) -> list[str]:
 def format_numeral(base_numeral, quality):
     core_quality = CORE_QUALITIES.get(quality, "major")
     numeral = base_numeral.lower() if core_quality in ["minor", "diminished"] else base_numeral
-    return numeral + quality
+
+    # Special formatting rules for seventh chords and half-diminished
+    if quality == "m7b5":
+        # half-diminished -> use the ø7 symbol
+        suffix = "ø7"
+    elif core_quality == "minor" and quality.startswith("m") and "7" in quality:
+        # minor seventh (m7, m9...) -> represent as numeral + '7' (drop the leading 'm')
+        # keep only the '7' part for numeral notation
+        suffix = "7"
+    else:
+        suffix = quality
+
+    return numeral + suffix
 
 
 def get_chord_notes(chord_name: str) -> list[str] | None:
