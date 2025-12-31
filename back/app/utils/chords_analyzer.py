@@ -82,25 +82,25 @@ def analyze_chord_in_context(chord_name, tonic_index, mode_name) -> QualityAnaly
 
     # --- Calcul du nom de l'accord attendu ---
     # Choose display names for roots: prefer flat names when the numeral is chromatic (starts with 'b')
-    FLAT_NOTES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
-    SHARP_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+    flat_notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+    sharp_notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
     if expected_quality is not None:
         expected_root_index = (tonic_index + interval) % 12
         # If the detected base numeral is chromatic flat (ex: 'bIII'), prefer flat spelling
         if base_numeral.startswith("b"):
-            expected_root_name = FLAT_NOTES[expected_root_index]
+            expected_root_name = flat_notes[expected_root_index]
         elif base_numeral.startswith("#"):
-            expected_root_name = SHARP_NOTES[expected_root_index]
+            expected_root_name = sharp_notes[expected_root_index]
         else:
-            # Default to SHARP_NOTES (matches existing get_note_from_index behaviour)
-            expected_root_name = SHARP_NOTES[expected_root_index]
+            # Default to sharp_notes (matches existing get_note_from_index behaviour)
+            expected_root_name = sharp_notes[expected_root_index]
         expected_chord_name = expected_root_name + expected_quality
 
     return {
         # Normalize displayed chord root according to the base numeral (so D# -> Eb when bIII)
         "chord": (
-            (FLAT_NOTES[chord_index] if base_numeral.startswith("b") else SHARP_NOTES[chord_index])
+            (flat_notes[chord_index] if base_numeral.startswith("b") else sharp_notes[chord_index])
             + found_quality
         ),
         "found_numeral": found_numeral,

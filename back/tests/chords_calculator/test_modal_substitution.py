@@ -1,5 +1,6 @@
 import pytest
-from back.app.chords_calculator.modal_substitution import get_substitution_info, get_substitutions
+
+from app.chords_calculator.modal_substitution import get_substitution_info, get_substitutions
 
 
 class TestGetSubstitutionInfo:

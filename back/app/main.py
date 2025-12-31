@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Tuple
 
 import uvicorn
-from back.app.chords_calculator.modal_substitution import get_substitution_info, get_substitutions
-from back.app.chords_calculator.secondary_dominant import get_secondary_dominant_for_target
-from back.app.chords_calculator.tritone_substitution import get_tritone_substitute
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.chords_calculator.modal_substitution import get_substitution_info, get_substitutions
+from app.chords_calculator.secondary_dominant import get_secondary_dominant_for_target
+from app.chords_calculator.tritone_substitution import get_tritone_substitute
 from app.schema import ChordItem, ProgressionRequest
 from app.services.analysis import get_analysis_data
 from app.services.data_filler import fill_interface_data
