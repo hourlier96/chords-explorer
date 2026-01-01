@@ -2,3 +2,4 @@ fastapi==0.117.1
 uvicorn==0.34.0
 dotenv
 google-generativeai
+requests==2.31.0

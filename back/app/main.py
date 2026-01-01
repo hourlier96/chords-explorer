@@ -1,9 +1,6 @@
 from typing import Any, Dict, List, Tuple
 
 import uvicorn
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
 from app.chords_calculator.modal_substitution import get_substitution_info, get_substitutions
 from app.chords_calculator.secondary_dominant import get_secondary_dominant_for_target
 from app.chords_calculator.tritone_substitution import get_tritone_substitute
@@ -14,6 +11,8 @@ from app.utils.borrowed_modes import get_borrowed_chords
 from app.utils.chords_analyzer import QualityAnalysisItem, analyze_chord_in_context
 from app.utils.common import get_note_from_index, get_note_index
 from constants import MAJOR_MODES_DATA, MODES_DATA
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
