@@ -1,5 +1,7 @@
 VENV_NAME := .venv
-PYTHON := $(VENV_NAME)/bin/python
+VENV_PYTHON := $(VENV_NAME)/bin/python
+PYTHON_SYSTEM := python3.13
+
 FASTAPI_PORT := 8000
 DEBUG_PORT := 5678
 BACKEND_DIR := back
@@ -8,13 +10,12 @@ VUE_PORT := 5173
 FRONTEND_DIR := front
 
 install:
-	@cd $(BACKEND_DIR) && export UV_PYTHON=$(PYTHON) && uv venv $(VENV_NAME) --clear && \
-	. $(VENV_NAME)/bin/activate && \
+	@cd $(BACKEND_DIR) && \
+	uv venv $(VENV_NAME) --clear --python $(PYTHON_SYSTEM) && \
 	uv pip compile requirements.in -o requirements.txt && \
-	uv pip install -r requirements.txt -r requirements-dev.txt && \
-	pre-commit install && \
-	cd ../$(FRONTEND_DIR) && \
-	npm install
+	uv pip install --python $(VENV_NAME) -r requirements.txt -r requirements-dev.txt && \
+	. $(VENV_NAME)/bin/activate && pre-commit install
+	@cd $(FRONTEND_DIR) && npm install
 
 kill:
 	@echo "Freeing required ports: $(FASTAPI_PORT) $(VUE_PORT) $(DEBUG_PORT)...\n"; \
